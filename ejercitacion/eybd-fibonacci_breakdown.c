@@ -15,9 +15,12 @@ int main (void){
 }
 
 int fibonacci (int num){
+    printf("Calling function for '%d'",num);
     if(num==0 || num==1){
         return num;
     }else{
-        return fibonacci(num-1)+fibonacci(num-2);
+        int res = fibonacci(num-1)+fibonacci(num-2);
+        printf("Returning %d for fibonacci(%d)",res,num);
+        return res;
     }
 }
