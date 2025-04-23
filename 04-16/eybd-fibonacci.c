@@ -5,12 +5,11 @@ int fibonacci (int);
 int main (void){
     int num = 0;
 
-    printf("Ingrese un valor: ");
+    printf("Ingrese la cantidad de digitos de la secuencia Fibonacci que quiera visualizar: ");
     scanf("%d",&num);
     
     for(int i=0;i<num;i++){
-        printf("i:%d|i-1:%d|i-2:%d\n",i,i-1,i-2);
-        printf("resultado: %d\n",fibonacci(i));
+        printf("%d, ",fibonacci(i));
     }
 }
 
