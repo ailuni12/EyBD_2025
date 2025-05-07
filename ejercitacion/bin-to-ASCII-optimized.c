@@ -3,49 +3,48 @@
 #include <string.h>
 #include <math.h>
 
-int p(char *);
-int bintodec(char *);
+#define arrsize 9 //8 espacios para el numero binario + 1 para el \0 
+
+int bintodec(char *, int);
 
 int main(void){
-    char binstring[9];
+    char binstring[arrsize];
+    int length=0;
     int j=0;
 
-    printf("Ingrese codigo en binario: ");
-    fgets(binstring,sizeof(binstring),stdin);
+    length=sizeof(binstring)/sizeof(binstring[0]);
 
-    printf("\narr size: %d\n",sizeof(binstring));
+    printf("Ingrese codigo en binario: ");
+    fgets(binstring,length,stdin);
+    binstring[strcspn(binstring,"\n")]=0;
+
+    printf("\narr size: %d\n",length);
     //tamaño de la cadena dentro de main
 
-    for(int i=0;i<sizeof(binstring);i++){
+    for(int i=0;i<length;i++){
         printf("\nInput: %c",binstring[i]);
     }
 
     printf("\n");
-    printf("\narr size in function: %d\n",p(binstring));
-    //tamaño de la cadena al pasarsela a una funcion
 
-    for(int i=(sizeof(binstring)-2);i>=0;i--){
+    for(int i=(length-2);i>=0;i--){
         printf("i: %d ",i);
         printf("c: %c\n",binstring[j]);
         j++; 
     }
 
-    printf("\nDecimal: %d",bintodec(binstring));
-    printf("\nCaracter ASCII: %c",bintodec(binstring));
+    printf("\nDecimal: %d",bintodec(binstring,length));
+    printf("\nCaracter ASCII: %c",bintodec(binstring,length));
 
     return 0;
 }
 
-int p(char *string){
-    return sizeof(string);
-}
-
-int bintodec(char *numerobin){
+int bintodec(char *numerobin, int length){
     int j=0, output=0;
 
     //binario a decimal
 
-    for(int i=(sizeof(numerobin)-1);i>=0;i--){
+    for(int i=(length-2);i>=0;i--){
         if(numerobin[j]=='1'){
             output+=pow(2,i);
         }
