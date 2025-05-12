@@ -87,6 +87,7 @@ int contarRegistros(FILE *archivo, char *filename, int elemento){
     }else{
         fseek(archivo,0,SEEK_END);
         cantReg=ftell(archivo)/elemento;
+        fclose(archivo);
     }
 
     return cantReg;

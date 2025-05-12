@@ -6,6 +6,13 @@
 
 #define maxchar 19
 
+typedef enum{
+    INICIO=0,
+    OPCIONUNO,
+    OPCIONDOS,
+    SALIDA
+}menu_t;
+
 typedef struct{
     int codigo;
     char nombre[maxchar];
@@ -18,14 +25,35 @@ void mostrarClientes(FILE *,char *);
 int main(void){
     char *filename = "clientes.dat";
     FILE *archivo;
+    int op=0;
 
     crearArchivo(archivo,filename);
-    cargarCliente(archivo,filename);
-    mostrarClientes(archivo,filename);
+
+    do{
+        printf("\n\n||| MENU DE NAVEGACION |||\n");
+        printf("\nSeleccione una opcion:");
+        printf("\n[1] Registrar cliente.");
+        printf("\n[2] Mostrar clientes.");
+        printf("\n[3] Finalizar.");
+        op=leerEntero("\nIngrese una opcion: ");
+
+        switch(op){
+        case 1:
+            cargarCliente(archivo,filename);
+            break;
+        case 2:
+            mostrarClientes(archivo,filename);
+            break;
+        case 3:
+            printf("\nHasta luego.\n");
+            break;
+        default:
+            printf("\nIngreso un valor invalido.\n");
+            break;
+        }
+    }while(op!=SALIDA);
 
     printf("\nCantidad de registros: %d",contarRegistros(archivo,filename,sizeof(cliente_t)));
-
-    fclose(archivo);
 
     return 0;
 }
@@ -33,6 +61,7 @@ int main(void){
 void cargarCliente(FILE *archivo, char *filename){
     int salida=1;
     cliente_t cli;
+    int cantReg=contarRegistros(archivo,filename,sizeof(cliente_t));
 
     archivo = fopen("clientes.dat","ab");
 
@@ -46,7 +75,7 @@ void cargarCliente(FILE *archivo, char *filename){
             fgets(cli.nombre,maxchar,stdin);
             limpiarNewline(cli.nombre);
 
-            cli.codigo=contarRegistros(archivo,filename,sizeof(cliente_t))+1;
+            cli.codigo=cantReg++;
             cli.saldo=0;
 
             fwrite(&cli,sizeof(cli),1,archivo);
@@ -61,32 +90,35 @@ void cargarCliente(FILE *archivo, char *filename){
             }while(salida>1 || salida<0);
 
         }while(salida==1);
+
+        fclose(archivo);
     }
 }
 
 void mostrarClientes(FILE *archivo, char *filename){
     cliente_t cli;
-    int cantreg=contarRegistros(archivo,filename,sizeof(cliente_t));
 
     archivo=fopen(filename,"rb");
 
     if(!archivo){
         printf("Error al abrir el archivo");
     }else{
-        printf("\nDATOS REGISTRADOS");
-        printf("\n| COD | NOMBRE | SALDO     |");
+        printf("\n-----DATOS REGISTRADOS-----");
+        printf("\n| COD | SALDO     | NOMBRE\n");
         linea(28);
 
         fread(&cli,sizeof(cliente_t),1,archivo);
 
         //mientras que no encuentre el final del archivo
         while(!feof(archivo)){
-            printf("\n| %d | %s | %.4f     |",cli.codigo,cli.nombre,cli.saldo);
+            printf("\n| %03d | %08.2f  | %s",cli.codigo,cli.saldo,cli.nombre);
             printf("\n");
             linea(28);
 
             fread(&cli,sizeof(cliente_t),1,archivo); //leer proximo
         }
+
+        fclose(archivo);
     }
 
 }
