@@ -77,13 +77,16 @@ void mostrarClientes(FILE *archivo, char *filename){
         printf("\n| COD | NOMBRE | SALDO     |");
         linea(28);
 
-        for(int i=0;i<=cantreg;i++){
-            fread(&cli,sizeof(cliente_t),1,archivo);
+        fread(&cli,sizeof(cliente_t),1,archivo);
 
-            printf("| %d | %s | %.4f     |",cli.codigo,cli.nombre,cli.saldo);
+        //mientras que no encuentre el final del archivo
+        while(!feof(archivo)){
+            printf("\n| %d | %s | %.4f     |",cli.codigo,cli.nombre,cli.saldo);
+            printf("\n");
             linea(28);
+
+            fread(&cli,sizeof(cliente_t),1,archivo); //leer proximo
         }
-        
     }
 
 }
