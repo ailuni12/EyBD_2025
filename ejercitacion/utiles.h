@@ -5,8 +5,10 @@
 
 #include <stdio.h>
 #include <conio.h>
+#include <string.h>
 
 void crearArchivo(FILE *, char *);
+void limpiarNewline(char *);
 
 void tecla(void){
     printf("\nPresione cualquier tecla para continuar.");
@@ -42,13 +44,14 @@ int leerEntero(const char *mensaje){
             if (sscanf(buffer, "%d", &numero) == 1){
                 flag = 0;
             }else{
-                printf("Entrada inválida. Intente nuevamente.\n");
+                printf("Entrada invalida. Intente nuevamente.\n");
             }
         }
     }
     return numero;
 }
 
+//check si existe archivo binario
 void crearArchivo(FILE *archivo, char *filename){
     archivo=fopen(filename,"r");
 
@@ -66,6 +69,25 @@ void crearArchivo(FILE *archivo, char *filename){
     }
 
     fclose(archivo);
+}
+
+void limpiarNewline(char *n){
+    n[strcspn(n, "\n")] = '\0';
+}
+
+int contarRegistros(FILE *archivo, char *filename, int elemento){
+    int cantReg;
+
+    archivo=fopen(filename,"rb");
+    
+    if(!archivo){
+        printf("Error en la apertura del archivo\n");
+    }else{
+        fseek(archivo,0,SEEK_END);
+        cantReg=ftell(archivo)/elemento;
+    }
+
+    return cantReg;
 }
 
 #endif /* UTILES_H_ */
