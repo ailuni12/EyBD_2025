@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <conio.h>
 
+void crearArchivo(FILE *, char *);
+
 void tecla(void){
     printf("\nPresione cualquier tecla para continuar.");
     getch();
@@ -45,6 +47,25 @@ int leerEntero(const char *mensaje){
         }
     }
     return numero;
+}
+
+void crearArchivo(FILE *archivo, char *filename){
+    archivo=fopen(filename,"r");
+
+    if(!archivo){
+        archivo=fopen(filename,"wb");
+        if(!archivo){
+            printf("\nError al crear el archivo.\n\n");
+        }else{
+            printf("Se creo '%s'.\n",filename);
+            fclose(archivo);
+        }
+    }else{
+        printf("\nEl archivo '%s' ya existe.\n\n",filename);
+        fclose(archivo);
+    }
+
+    fclose(archivo);
 }
 
 #endif /* UTILES_H_ */
