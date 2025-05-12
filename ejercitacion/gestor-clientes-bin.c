@@ -13,6 +13,7 @@ typedef struct{
 }cliente_t;
 
 void cargarCliente(FILE *, char *);
+void mostrarClientes(FILE *,char *);
 
 int main(void){
     char *filename = "clientes.dat";
@@ -20,8 +21,11 @@ int main(void){
 
     crearArchivo(archivo,filename);
     cargarCliente(archivo,filename);
+    mostrarClientes(archivo,filename);
 
     printf("\nCantidad de registros: %d",contarRegistros(archivo,filename,sizeof(cliente_t)));
+
+    fclose(archivo);
 
     return 0;
 }
@@ -58,4 +62,28 @@ void cargarCliente(FILE *archivo, char *filename){
 
         }while(salida==1);
     }
+}
+
+void mostrarClientes(FILE *archivo, char *filename){
+    cliente_t cli;
+    int cantreg=contarRegistros(archivo,filename,sizeof(cliente_t));
+
+    archivo=fopen(filename,"rb");
+
+    if(!archivo){
+        printf("Error al abrir el archivo");
+    }else{
+        printf("\nDATOS REGISTRADOS");
+        printf("\n| COD | NOMBRE | SALDO     |");
+        linea(28);
+
+        for(int i=0;i<=cantreg;i++){
+            fread(&cli,sizeof(cliente_t),1,archivo);
+
+            printf("| %d | %s | %.4f     |",cli.codigo,cli.nombre,cli.saldo);
+            linea(28);
+        }
+        
+    }
+
 }

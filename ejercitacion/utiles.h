@@ -76,6 +76,7 @@ void limpiarNewline(char *n){
 }
 
 //contar registros en un archivo binario
+//int elemento: sizeof del tipo de dato guardado en el archivo
 int contarRegistros(FILE *archivo, char *filename, int elemento){
     int cantReg;
 
