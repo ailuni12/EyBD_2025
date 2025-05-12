@@ -75,6 +75,7 @@ void limpiarNewline(char *n){
     n[strcspn(n, "\n")] = '\0';
 }
 
+//contar registros en un archivo binario
 int contarRegistros(FILE *archivo, char *filename, int elemento){
     int cantReg;
 
