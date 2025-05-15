@@ -91,6 +91,7 @@ int main(void){
         case OPCIONSEIS:
             break;
         case OPCIONSIETE:
+            ordenarNombres(archivo_clientes,nda_clientes);
             break;
         case SALIDA:
             printf("\nHasta luego.\n");
@@ -262,5 +263,30 @@ void mostrarArticulos(FILE *archivo_articulos, char *nda_articulos){
 }
 
 void ordenarNombres(FILE *archivo_clientes, char *nda_clientes){
+    int cantReg=contarRegistros(archivo_clientes,nda_clientes,sizeof(cliente_t));
+    cliente_t listado[100];
+    cliente_t buffer;
+    int i=0;
 
+    archivo_clientes=fopen(nda_clientes,"rb");
+
+    if(!archivo_clientes){
+        printf("Error al abrir el Archivo");
+    }else{
+        fread(&buffer,sizeof(cliente_t),1,archivo_clientes);
+
+        while (!feof(archivo_clientes)){
+            listado[i]=buffer;
+            i++;
+
+            fread(&buffer,sizeof(cliente_t),1,archivo_clientes);
+        }
+
+        fclose(archivo_clientes);
+        
+        printf("\n| %03d | %08.2f  | %s",listado[0].codigo,listado[0].saldo,listado[0].nombre);
+        printf("\n");
+        printf("\n| %03d | %08.2f  | %s",listado[cantReg].codigo,listado[cantReg].saldo,listado[cantReg].nombre);
+        printf("\n");
+    }
 }
