@@ -16,7 +16,7 @@ typedef struct
 int cod_chof;
 char nom_chof[30];
 int kms; // kilometros recorridos
-int rec; // Recaudacion
+int rec; // Recaudación
 }registro_t;
 
 void actualizarRegistros();
