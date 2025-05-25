@@ -45,6 +45,7 @@ void mostrarClientes(FILE *,char *);
 void cargarArticulo(FILE *,char *);
 void mostrarArticulos(FILE *, char *);
 void ordenarNombres(FILE *, char *);
+void bubblesort(cliente_t[],int);
 
 int main(void){
     //nda = 'Nombre de Archivo'
@@ -102,7 +103,7 @@ int main(void){
         }
     }while(op!=SALIDA);
 
-    printf("\nCantidad de registros: %d",contarRegistros(archivo_clientes,nda_clientes,sizeof(cliente_t)));
+    printf("\nINFORMACION DE ARCHIVO\nCantidad de registros: %d",contarRegistros(archivo_clientes,nda_clientes,sizeof(cliente_t)));
 
     return 0;
 }
@@ -263,7 +264,7 @@ void mostrarArticulos(FILE *archivo_articulos, char *nda_articulos){
 }
 
 void ordenarNombres(FILE *archivo_clientes, char *nda_clientes){
-    int cantReg=contarRegistros(archivo_clientes,nda_clientes,sizeof(cliente_t));
+    const int cantReg=contarRegistros(archivo_clientes,nda_clientes,sizeof(cliente_t));
     cliente_t listado[100];
     cliente_t buffer;
     int i=0;
@@ -284,9 +285,29 @@ void ordenarNombres(FILE *archivo_clientes, char *nda_clientes){
 
         fclose(archivo_clientes);
         
-        printf("\n| %03d | %08.2f  | %s",listado[0].codigo,listado[0].saldo,listado[0].nombre);
-        printf("\n");
-        printf("\n| %03d | %08.2f  | %s",listado[cantReg].codigo,listado[cantReg].saldo,listado[cantReg].nombre);
-        printf("\n");
+        bubblesort(listado,cantReg);
+
+        printf("\n------DATOS ORDENADOS------");
+        printf("\n| COD | SALDO     | NOMBRE\n");
+        linea(28);
+        for(int i=0;i<cantReg;i++){
+            printf("\n| %03d | %08.2f  | %s",listado[i].codigo,listado[i].saldo,listado[i].nombre);
+            printf("\n");
+            linea(28);
+        }
+    }
+}
+
+void bubblesort(cliente_t lista[],int registros){
+    cliente_t aux;
+
+    for(int i=0;i<registros;i++){
+        for(int j=0;j<registros-i-1;j++){
+            if(strcmp(lista[j].nombre,lista[j+1].nombre)>0){
+                aux=lista[j];
+                lista[j]=lista[j+1];
+                lista[j+1]=aux;
+            }
+        }
     }
 }
