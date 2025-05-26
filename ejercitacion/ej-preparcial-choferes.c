@@ -71,13 +71,14 @@ void registro_viajes(FILE *archivo, char *nda){
         printf("Error al abrir el archivo '%s'",nda);
     }else{
 
+        linea(28);
         printf("\nViajes realizados:\n");
         while((c=getc(archivo))!=EOF){
             printf("%c",c);
             while(fgets(cadena,sizeof(cadena),archivo)){
                 printf("%s",cadena);
             }
-            printf("\n\n****\n");
+            linea(28);
         }
 
         fclose(archivo);
@@ -87,14 +88,15 @@ void registro_viajes(FILE *archivo, char *nda){
 void actualizar_bd(FILE *archivo, char*nda){
     FILE *bd_choferes;
     char *nda_choferes="choferes.dat";
-    crearArchivo(bd_choferes,nda_choferes);
+    registro_t buffer;
 
+    crearArchivo(bd_choferes,nda_choferes);
     bd_choferes=fopen(nda_choferes,"rb+");
     
     if(!bd_choferes){
         printf("Error al abrir el archivo '%s'",nda_choferes);
     }else{
-        
+
     }
 }
 

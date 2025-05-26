@@ -12,6 +12,7 @@ void crearArchivo(FILE *, char *);
 void limpiarNewline(char *);
 bool existeNewline(char *);
 int codigoASCII(char *);
+void imprimir_texto(FILE *, char *);
 
 void tecla(void){
     printf("\nPresione cualquier tecla para continuar.");
@@ -108,6 +109,26 @@ int contarRegistros(FILE *archivo, char *filename, int elemento){
     }
 
     return cantReg;
+}
+
+void imprimir_texto(FILE *archivo, char *nda){
+    int c;
+    char *cadena;
+
+    archivo=fopen(nda,"r");
+
+    if(!archivo){
+        printf("Error al abrir el archivo '%s'",nda);
+    }else{
+        while((c=getc(archivo))!=EOF){
+            printf("%c",c);
+            while(fgets(cadena,sizeof(cadena),archivo)){
+                printf("%s",cadena);
+            }
+        }
+
+        fclose(archivo);
+    }
 }
 
 #endif /* UTILES_H_ */
