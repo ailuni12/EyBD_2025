@@ -34,7 +34,7 @@ typedef struct{
 
 void registro_viajes(FILE *,char *);
 void actualizar_bd(FILE *,char *);
-int procesarRegistro(FILE *, char *, buffer_t [],int);
+int procesarRegistro(FILE *, char *, buffer_t []);
 bool validar_cod(registro_t [],int,int);
 
 int main(void){
@@ -139,7 +139,7 @@ int parsear_lineas(buffer_t original[], registro_t final[],int cantregistros){
     char *token;
 
     for(int i=0;i<cantregistros;i++){
-        strcpy(aux.cadena,original[i].cadena,sizeof(aux.cadena));
+        strncpy(aux.cadena,original[i].cadena,sizeof(aux.cadena));
         aux.cadena[sizeof(aux.cadena)-1]='\0'; //asegurar que el string copiado tenga el null terminator al final, ya que strcpy no lo asegura
 
         // token 1: codigo
@@ -187,7 +187,7 @@ int parsear_lineas(buffer_t original[], registro_t final[],int cantregistros){
 bool validar_cod(registro_t lista[],int cod, int elementos){
     for(int i=0;i<elementos;i++){
         if(lista[i].cod_chof==cod) return true;
-        return false;
     }
+    return false;
 }
 
