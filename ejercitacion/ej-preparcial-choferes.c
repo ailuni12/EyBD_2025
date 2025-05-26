@@ -108,14 +108,26 @@ void actualizar_bd(FILE *archivo, char*nda){
             printf("%s",listado[i].cadena);
         }
     }
+
+    fclose(bd_choferes);
 }
 
 void procesarRegistro(FILE *archivo, char *nda, buffer_t cad[]){
     char buffer[80];
     int i=0;
-    while(fgets(buffer,81,archivo)){
+
+    archivo=fopen(nda,"r");
+
+    if(archivo){
+        while(fgets(buffer,81,archivo)){
         strcpy(cad[i].cadena,buffer);
         i++;
+        }
+    }else{
+        printf("Error al leer el archivo '%s'",nda);
     }
+
+    fclose(archivo);
+    
 }
 
