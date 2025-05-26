@@ -26,6 +26,7 @@ int rec; // Recaudacion
 }registro_t;
 
 void registro_viajes(FILE *,char *);
+void actualizar_bd(FILE *,char *);
 
 int main(void){
     char *nda_viajes="texto.txt";
@@ -73,12 +74,27 @@ void registro_viajes(FILE *archivo, char *nda){
         printf("\nViajes realizados:\n");
         while((c=getc(archivo))!=EOF){
             printf("%c",c);
-            while(fgets(cadena,1,archivo)) // Almacena en un cadena !=NULL) hasta \n n-1 o salto de linea
-            printf("%s",cadena);
+            while(fgets(cadena,sizeof(cadena),archivo)){
+                printf("%s",cadena);
+            }
             printf("\n\n****\n");
         }
 
         fclose(archivo);
+    }
+}
+
+void actualizar_bd(FILE *archivo, char*nda){
+    FILE *bd_choferes;
+    char *nda_choferes="choferes.dat";
+    crearArchivo(bd_choferes,nda_choferes);
+
+    bd_choferes=fopen(nda_choferes,"rb+");
+    
+    if(!bd_choferes){
+        printf("Error al abrir el archivo '%s'",nda_choferes);
+    }else{
+        
     }
 }
 

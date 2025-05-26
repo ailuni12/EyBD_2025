@@ -54,7 +54,7 @@ int leerEntero(const char *mensaje){
     return numero;
 }
 
-//check si existe archivo binario
+//check si existe archivo binario, si no, lo crea
 void crearArchivo(FILE *archivo, char *filename){
     archivo=fopen(filename,"r");
 
@@ -63,12 +63,10 @@ void crearArchivo(FILE *archivo, char *filename){
         if(!archivo){
             printf("\nError al crear el archivo.\n\n");
         }else{
-            printf("Se creo '%s'.\n",filename);
-            fclose(archivo);
+            printf("\nSe creo '%s'.\n",filename);
         }
     }else{
         printf("\nEl archivo '%s' ya existe.\n\n",filename);
-        fclose(archivo);
     }
 
     fclose(archivo);
