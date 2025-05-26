@@ -6,6 +6,7 @@
 #include "utiles.h"
 
 #define MAX_REGISTROS 20
+#define PRECIO_KM 2000
 
 typedef enum{
     INICIO=0,
@@ -33,7 +34,8 @@ typedef struct{
 
 void registro_viajes(FILE *,char *);
 void actualizar_bd(FILE *,char *);
-int procesarRegistro(FILE *, char *, buffer_t []);
+int procesarRegistro(FILE *, char *, buffer_t [],int);
+bool validar_cod(registro_t [],int,int);
 
 int main(void){
     char *nda_viajes="texto.txt";
@@ -103,13 +105,7 @@ void actualizar_bd(FILE *archivo, char*nda){
         printf("Error al abrir el archivo '%s'",nda_choferes);
     }else{
         int cant_registros=procesarRegistro(archivo,nda,listado);
-
-        for(int i=0;i<cant_registros;i++){
-            printf("%s",listado[i].cadena);
-
-        }
-
-
+        parsear_lineas(listado,lista_final,cant_registros);
     }
 
     fclose(bd_choferes);
@@ -137,33 +133,61 @@ int procesarRegistro(FILE *archivo, char *nda, buffer_t cad[]){
     
 }
 
-int parsear_lineas(buffer_t original[], registro_t final[]){
+int parsear_lineas(buffer_t original[], registro_t final[],int cantregistros){
     buffer_t aux;
+    int cod;
     char *token;
 
-    strcpy(aux.cadena,original->cadena,sizeof(aux.cadena));
-    aux.cadena[sizeof(aux.cadena)-1]='\0';
+    for(int i=0;i<cantregistros;i++){
+        strcpy(aux.cadena,original[i].cadena,sizeof(aux.cadena));
+        aux.cadena[sizeof(aux.cadena)-1]='\0'; //asegurar que el string copiado tenga el null terminator al final, ya que strcpy no lo asegura
 
-    // token 1: codigo
-    token = strtok(aux.cadena, ",");
-    if (!token) return 0; //retornar en caso de que haya error o sea NULL
-    final->cod_chof = atoi(token);
+        // token 1: codigo
+        token = strtok(aux.cadena, ",");
+        if (!token) return 0; //retornar en caso de que haya error o sea NULL
+        cod = atoi(token);
 
-    // token 2: nombre
-    token = strtok(NULL, ",");
-    if (!token) return 0;
-    strncpy(final->nom_chof, token, sizeof(final->nom_chof));
-    final->nom_chof[sizeof(final->nom_chof) - 1] = '\0';
+        if(validar_cod(final,cod,i)){
+            // token 3: kms
+            token = strtok(NULL, ",");
+            if (!token) return 0;
+            final[i].kms += atoi(token);
 
-    // token 3: kms
-    token = strtok(NULL, ",");
-    if (!token) return 0;
-    final->kms = atoi(token);
+            // calcular recaudación
+            final[i].rec = final[i].kms*PRECIO_KM;
+        }else{
+            final[i].cod_chof=cod;
 
-    // calcular recaudación
-    final->rec = final->kms * 2000;  // o el valor que corresponda
+            // token 2: nombre
+            token = strtok(NULL, ",");
+            if (!token) return 0;
+            strncpy(final[i].nom_chof, token, sizeof(final[i].nom_chof));
+            final[i].nom_chof[sizeof(final[i].nom_chof) - 1] = '\0';
+
+            // token 3: kms
+            token = strtok(NULL, ",");
+            if (!token) return 0;
+            final[i].kms = atoi(token);
+
+            // calcular recaudación
+            final[i].rec = final[i].kms*PRECIO_KM;
+        }
+          
+    }
+
+    printf("\ncodigo|nombre|kms|recaudacion:\n");
+    for(int j=0;j<cantregistros;j++){
+        printf("%d|%s|%d|%f",final[j].cod_chof,final[j].nom_chof,final[j].kms,final[j].rec);
+    }
 
     return 1;
 
+}
+
+bool validar_cod(registro_t lista[],int cod, int elementos){
+    for(int i=0;i<elementos;i++){
+        if(lista[i].cod_chof==cod) return true;
+        return false;
+    }
 }
 
