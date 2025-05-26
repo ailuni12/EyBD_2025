@@ -17,7 +17,7 @@ int main(void){
 
 void registro_viajes(FILE *archivo, char *nda){
     int c;
-    char *cadena;
+    char cadena[80];
 
     archivo=fopen(nda,"r");
 
@@ -26,16 +26,13 @@ void registro_viajes(FILE *archivo, char *nda){
     }else{
         linea(28);
         printf("\nViajes realizados:\n");
-        while(!feof(archivo)){
-            while((c=getc(archivo))!=EOF){
-                //printf("%c",c);
-                while(fgets(cadena,80,archivo)){
-                    printf("\n%s\n",cadena);
-                    tecla();
-                } 
-            }
+        //lee el archivo linea por linea, siempre y cuando la linea leida no sea de mayor cantidad de caracteres que el buffer (cadena[80] en este caso)
+        while(fgets(cadena,81,archivo)){
+            printf("\n%s",cadena);
+            tecla();
         }
-
         fclose(archivo);
     }
 }
+
+//nota: while(fgets...) es lo mismo que fgets!=NULL
