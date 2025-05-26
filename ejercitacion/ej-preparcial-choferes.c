@@ -70,13 +70,12 @@ void registro_viajes(FILE *archivo, char *nda){
     if(!archivo){
         printf("Error al abrir el archivo '%s'",nda);
     }else{
-
         linea(28);
         printf("\nViajes realizados:\n");
         while((c=getc(archivo))!=EOF){
             printf("%c",c);
             while(fgets(cadena,sizeof(cadena),archivo)){
-                printf("%s",cadena);
+                printf("%s\n",cadena);
             }
             linea(28);
         }

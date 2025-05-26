@@ -13,6 +13,7 @@ void limpiarNewline(char *);
 bool existeNewline(char *);
 int codigoASCII(char *);
 void imprimir_texto(FILE *, char *);
+int to_int(char);
 
 void tecla(void){
     printf("\nPresione cualquier tecla para continuar.");
@@ -129,6 +130,11 @@ void imprimir_texto(FILE *archivo, char *nda){
 
         fclose(archivo);
     }
+}
+
+//en teoria, lee un caracter y lo convierte al int que representa
+int to_int(char c){
+    return c - '0';
 }
 
 #endif /* UTILES_H_ */
