@@ -8,6 +8,12 @@
 typedef enum{
     INICIO=0,
     OPCIONUNO,
+    OPCIONDOS,
+    OPCIONTRES,
+    OPCIONCUATRO,
+    OPCIONCINCO,
+    OPCIONSEIS,
+    OPCIONSIETE,
     SALIDA
 }menu_t;
 
@@ -16,26 +22,31 @@ typedef struct
 int cod_chof;
 char nom_chof[30];
 int kms; // kilometros recorridos
-int rec; // Recaudación
+int rec; // Recaudacion
 }registro_t;
 
-void actualizarRegistros();
+void registro_viajes(FILE *,char *);
 
 int main(void){
+    char *nda_viajes="texto.txt";
+    FILE *archivo_viajes;
     int op=0;
 
 
     do{
         printf("\n\n||| MENU DE NAVEGACION |||\n");
         printf("\nSeleccione una opcion:");
-        printf("\n[1] Mostrar choferes.");
-        printf("\n[2] Finalizar.");
+        printf("\n[1] Mostrar viajes realizados.");
+        printf("\n[2] Mostrar choferes.");
+        printf("\n[%d] Finalizar.",SALIDA);
         op=leerEntero("\nIngrese una opcion: ");
 
         switch(op){
         case OPCIONUNO:
             fflush(stdin);
-            actualizarRegistros();
+            registro_viajes(archivo_viajes,nda_viajes);
+            break;
+        case OPCIONDOS:
             break;
         case SALIDA:
             printf("\nHasta luego.\n");
@@ -49,26 +60,25 @@ int main(void){
     return 0;
 }
 
-void actualizarRegistros(){
+void registro_viajes(FILE *archivo, char *nda){
     int c;
-    char cadena[100];
-    char *nda_viajes="texto.txt";
-    FILE *archivo_viajes;
+    char *cadena;
 
-    archivo_viajes=fopen(nda_viajes,"r");
+    archivo=fopen(nda,"r");
 
-    if(!archivo_viajes){
-        printf("Error al abrir el archivo");
+    if(!archivo){
+        printf("Error al abrir el archivo '%s'",nda);
     }else{
 
-        while((c = getc(archivo_viajes))!=EOF){
+        printf("\nViajes realizados:\n");
+        while((c=getc(archivo))!=EOF){
             printf("%c",c);
-            while(fgets(cadena,100,archivo_viajes)) // Almacena en un cadena !=NULL) hasta \n n-1 o salto de linea
+            while(fgets(cadena,1,archivo)) // Almacena en un cadena !=NULL) hasta \n n-1 o salto de linea
             printf("%s",cadena);
             printf("\n\n****\n");
         }
 
-        fclose(archivo_viajes);
+        fclose(archivo);
     }
 }
 
