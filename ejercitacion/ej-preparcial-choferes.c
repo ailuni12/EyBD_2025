@@ -98,6 +98,7 @@ void actualizar_bd(FILE *archivo, char*nda){
     char *nda_choferes="choferes.dat";
     buffer_t listado[MAX_REGISTROS];
     registro_t lista_final[MAX_REGISTROS];
+    registro_t aux;
 
     crearArchivo(bd_choferes,nda_choferes);
     bd_choferes=fopen(nda_choferes,"rb+");
@@ -109,7 +110,15 @@ void actualizar_bd(FILE *archivo, char*nda){
         for(int i=0;i<cant_registros;i++){
             printf("%s",listado[i].cadena);
         }
-        parsear_lineas(listado,lista_final,cant_registros);
+        int index=parsear_lineas(listado,lista_final,cant_registros);
+
+        for(int i=0;i<index;i++){
+            aux=lista_final[i];
+            fwrite(&aux.cod_chof,sizeof(int),1,bd_choferes);
+            fwrite(aux.nom_chof,sizeof(aux.nom_chof),1,bd_choferes);
+            fwrite(&aux.kms,sizeof(int),1,bd_choferes);
+            fwrite(&aux.rec,sizeof(int),1,bd_choferes);
+        }
     }
 
     fclose(bd_choferes);
@@ -154,6 +163,10 @@ int parsear_lineas(buffer_t original[], registro_t final[],int cantregistros){
         cod = atoi(token);
 
         if(validar_cod(final,cod,index,&posicion)){
+            //saltea el token del nombre
+            token = strtok(NULL, ",");
+            if (!token) return 0;
+
             // token 3: kms
             token = strtok(NULL, ",");
             if (!token) return 0;
@@ -182,17 +195,17 @@ int parsear_lineas(buffer_t original[], registro_t final[],int cantregistros){
           
     }
 
-    printf("\n\ncodigo|nombre|kms|recaudacion:\n");
+    printf("\n\ncodigo |nombre |kms |recaudacion:");
     for(int j=0;j<index;j++){
-        printf("\n%d|%s|%d|$%d",final[j].cod_chof,final[j].nom_chof,final[j].kms,final[j].rec);
+        printf("\n%d| %s |%dkm|$%d",final[j].cod_chof,final[j].nom_chof,final[j].kms,final[j].rec);
     }
 
-    return 1;
+    return index;
 
 }
 
 bool validar_cod(registro_t lista[],int cod, int elementos, int *posicion){
-    for(int i=0;i<=elementos;i++){
+    for(int i=0;i<elementos;i++){
         if(lista[i].cod_chof==cod){
             (*posicion)=i;
             return true;
