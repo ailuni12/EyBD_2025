@@ -35,7 +35,8 @@ typedef struct{
 void registro_viajes(FILE *,char *);
 void actualizar_bd(FILE *,char *);
 int procesarRegistro(FILE *, char *, buffer_t []);
-bool validar_cod(registro_t [],int,int);
+int parsear_lineas(buffer_t [], registro_t [],int);
+bool validar_cod(registro_t [],int,int,int *);
 
 int main(void){
     char *nda_viajes="texto.txt";
@@ -105,6 +106,9 @@ void actualizar_bd(FILE *archivo, char*nda){
         printf("Error al abrir el archivo '%s'",nda_choferes);
     }else{
         int cant_registros=procesarRegistro(archivo,nda,listado);
+        for(int i=0;i<cant_registros;i++){
+            printf("%s",listado[i].cadena);
+        }
         parsear_lineas(listado,lista_final,cant_registros);
     }
 
@@ -119,7 +123,7 @@ int procesarRegistro(FILE *archivo, char *nda, buffer_t cad[]){
     archivo=fopen(nda,"r");
 
     if(archivo){
-        while(i<MAX_REGISTROS && (buffer,81,archivo)){
+        while(i<MAX_REGISTROS && fgets(buffer,81,archivo)){
         strcpy(cad[i].cadena,buffer);
         i++;
         }
@@ -137,6 +141,7 @@ int parsear_lineas(buffer_t original[], registro_t final[],int cantregistros){
     buffer_t aux;
     int cod;
     char *token;
+    int posicion=0;
 
     for(int i=0;i<cantregistros;i++){
         strncpy(aux.cadena,original[i].cadena,sizeof(aux.cadena));
@@ -147,14 +152,14 @@ int parsear_lineas(buffer_t original[], registro_t final[],int cantregistros){
         if (!token) return 0; //retornar en caso de que haya error o sea NULL
         cod = atoi(token);
 
-        if(validar_cod(final,cod,i)){
+        if(validar_cod(final,cod,i,&posicion)){
             // token 3: kms
             token = strtok(NULL, ",");
             if (!token) return 0;
-            final[i].kms += atoi(token);
+            final[posicion].kms += atoi(token);
 
             // calcular recaudación
-            final[i].rec = final[i].kms*PRECIO_KM;
+            final[posicion].rec = final[i].kms*PRECIO_KM;
         }else{
             final[i].cod_chof=cod;
 
@@ -175,18 +180,21 @@ int parsear_lineas(buffer_t original[], registro_t final[],int cantregistros){
           
     }
 
-    printf("\ncodigo|nombre|kms|recaudacion:\n");
+    printf("\n\ncodigo|nombre|kms|recaudacion:\n");
     for(int j=0;j<cantregistros;j++){
-        printf("%d|%s|%d|%f",final[j].cod_chof,final[j].nom_chof,final[j].kms,final[j].rec);
+        printf("\n%d|%s|%d|$%d",final[j].cod_chof,final[j].nom_chof,final[j].kms,final[j].rec);
     }
 
     return 1;
 
 }
 
-bool validar_cod(registro_t lista[],int cod, int elementos){
+bool validar_cod(registro_t lista[],int cod, int elementos, int *posicion){
     for(int i=0;i<elementos;i++){
-        if(lista[i].cod_chof==cod) return true;
+        if(lista[i].cod_chof==cod){
+            (*posicion)=i;
+            return true;
+        }
     }
     return false;
 }
