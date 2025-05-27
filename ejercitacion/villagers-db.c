@@ -39,9 +39,9 @@ int procesarRegistro(FILE *, char *, buffer_t []);
 int main(void){
     //fn: filename
     FILE *file_v;
-    char *fn_villagers="villagers.txt";
+    char *fn_villagers="villagers.dat";
 
-    imprimir_texto(file_v,fn_villagers);
+    imprimir_texto(file_v,"villagers.txt");
 
     return 0;
 }
