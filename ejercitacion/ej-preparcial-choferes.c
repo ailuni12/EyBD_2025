@@ -142,6 +142,7 @@ int parsear_lineas(buffer_t original[], registro_t final[],int cantregistros){
     int cod;
     char *token;
     int posicion=0;
+    int index=0;
 
     for(int i=0;i<cantregistros;i++){
         strncpy(aux.cadena,original[i].cadena,sizeof(aux.cadena));
@@ -152,36 +153,37 @@ int parsear_lineas(buffer_t original[], registro_t final[],int cantregistros){
         if (!token) return 0; //retornar en caso de que haya error o sea NULL
         cod = atoi(token);
 
-        if(validar_cod(final,cod,i,&posicion)){
+        if(validar_cod(final,cod,index,&posicion)){
             // token 3: kms
             token = strtok(NULL, ",");
             if (!token) return 0;
-            final[posicion].kms += atoi(token);
+            final[posicion].kms=final[posicion].kms+atoi(token);
 
             // calcular recaudación
-            final[posicion].rec = final[i].kms*PRECIO_KM;
+            final[posicion].rec=final[posicion].kms*PRECIO_KM;
         }else{
-            final[i].cod_chof=cod;
+            final[index].cod_chof=cod;
 
             // token 2: nombre
             token = strtok(NULL, ",");
             if (!token) return 0;
-            strncpy(final[i].nom_chof, token, sizeof(final[i].nom_chof));
-            final[i].nom_chof[sizeof(final[i].nom_chof) - 1] = '\0';
+            strncpy(final[index].nom_chof, token, sizeof(final[index].nom_chof));
+            final[index].nom_chof[sizeof(final[index].nom_chof) - 1] = '\0';
 
             // token 3: kms
             token = strtok(NULL, ",");
             if (!token) return 0;
-            final[i].kms = atoi(token);
+            final[index].kms = atoi(token);
 
             // calcular recaudación
-            final[i].rec = final[i].kms*PRECIO_KM;
+            final[index].rec = final[index].kms*PRECIO_KM;
+            index++;
         }
           
     }
 
     printf("\n\ncodigo|nombre|kms|recaudacion:\n");
-    for(int j=0;j<cantregistros;j++){
+    for(int j=0;j<index;j++){
         printf("\n%d|%s|%d|$%d",final[j].cod_chof,final[j].nom_chof,final[j].kms,final[j].rec);
     }
 
@@ -190,7 +192,7 @@ int parsear_lineas(buffer_t original[], registro_t final[],int cantregistros){
 }
 
 bool validar_cod(registro_t lista[],int cod, int elementos, int *posicion){
-    for(int i=0;i<elementos;i++){
+    for(int i=0;i<=elementos;i++){
         if(lista[i].cod_chof==cod){
             (*posicion)=i;
             return true;
