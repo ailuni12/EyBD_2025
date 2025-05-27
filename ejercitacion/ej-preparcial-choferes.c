@@ -142,6 +142,7 @@ int procesarRegistro(FILE *archivo, char *nda, buffer_t cad[]){
 
     fclose(archivo);
 
+    //retorna la cantidad de lineas leidas
     return i;
     
 }

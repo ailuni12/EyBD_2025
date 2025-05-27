@@ -112,29 +112,30 @@ int contarRegistros(FILE *archivo, char *filename, int elemento){
     return cantReg;
 }
 
+//en teoria, lee un caracter y lo convierte al int que representa
+int to_int(char c){
+    return c - '0';
+}
+
+//imprimir archivo de texto linea por linea
 void imprimir_texto(FILE *archivo, char *nda){
-    int c;
-    char *cadena;
+    char cadena[100];
 
     archivo=fopen(nda,"r");
 
     if(!archivo){
         printf("Error al abrir el archivo '%s'",nda);
     }else{
-        while((c=getc(archivo))!=EOF){
-            printf("%c",c);
-            while(fgets(cadena,sizeof(cadena),archivo)){
-                printf("%s",cadena);
-            }
+        printf("\n---Contenido de '%s'---\n",nda);
+        while(fgets(cadena,101,archivo)){
+            printf("%s",cadena);
         }
-
-        fclose(archivo);
+        printf("\n");
+        linea(23);
     }
-}
 
-//en teoria, lee un caracter y lo convierte al int que representa
-int to_int(char c){
-    return c - '0';
+    fclose(archivo);
+    
 }
 
 #endif /* UTILES_H_ */
