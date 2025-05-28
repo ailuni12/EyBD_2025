@@ -102,6 +102,7 @@ bool existeNewline(char *string){
     return 0;
 }
 
+//recibe un char y retorna su codigo ASCII correspondiente
 int codigoASCII(char *a){
     return (int)(*a);
 }
@@ -125,7 +126,7 @@ int contarRegistros(FILE *archivo, char *filename, int elemento){
     return cantReg;
 }
 
-//en teoria, lee un caracter y lo convierte al int que representa
+//en teoria, lee un caracter tipo numero (ej. '1') y lo convierte al int que representa
 int to_int(char c){
     return c - '0';
 }
