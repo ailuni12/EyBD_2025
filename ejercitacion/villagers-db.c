@@ -58,7 +58,9 @@ int main(void){
         crearArchivo(file_v,fn_villagers);
         write_to_dat(file_v,fn_villagers,parsed_list,index);
     }
+
     index=contarRegistros(file_v,fn_villagers,sizeof(villager_t));
+    printf("\nNumber of registered villagers: %d\n",index);
     
     do{
         printf("\n\n||| NAVIGATION MENU |||\n");
@@ -74,7 +76,6 @@ int main(void){
             list_villagers(file_v,fn_villagers);
             break;
         case OPCIONDOS:
-            printf("\nNumber of registered villagers: %d\n",index);
             do{
                 input=leerEntero("Select a villager number: ");
                 if(input>index||input<0) printf("\nError. Type again.");
@@ -82,10 +83,10 @@ int main(void){
             display_one_v(file_v, fn_villagers, input-1);
             break;
         case SALIDA:
-            printf("\nHasta luego.\n");
+            printf("\nSee you.\n");
             break;
         default:
-            printf("\nIngreso un valor invalido.\n");
+            printf("\nInvalid input.\n");
             break;
         }
     }while(op!=SALIDA);
@@ -193,9 +194,11 @@ void display_one_v(FILE *f,char *fn,int input){
     if(!f){
         printf("\n'%s' couldn't be read.\n",fn);
     }else{
+        //sizeof one item * position, eg size 8 * pos 2 = 16
         fseek(f,sizeof(villager_t)*input,SEEK_SET);
         fread(&v,sizeof(villager_t),1,f);
         printf("\nVILLAGER INFO:\n");
+        linea(20);
         printf("\nName: %s\nPersonality: %s\nBirthday: %s %d\n",v.name,v.pers,v.birthmonth,v.birthday);
         linea(20);
     }
