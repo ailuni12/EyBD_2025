@@ -14,6 +14,7 @@ bool existeNewline(char *);
 int codigoASCII(char *);
 void imprimir_texto(FILE *, char *);
 int to_int(char);
+bool existe(FILE *, char *);
 
 void tecla(void){
     printf("\nPresione cualquier tecla para continuar.");
@@ -74,6 +75,17 @@ void crearArchivo(FILE *archivo, char *filename){
     fclose(archivo);
 }
 
+//validar existencia de archivo
+bool existe(FILE *f, char *fn){
+    f=fopen(fn,"r");
+    if(f){
+        return true;
+    }else{
+        return false;
+    }
+    fclose(f);
+}
+
 void limpiarNewline(char *n){
     n[strcspn(n, "\n")] = '\0';
 }
@@ -102,12 +114,13 @@ int contarRegistros(FILE *archivo, char *filename, int elemento){
     archivo=fopen(filename,"rb");
     
     if(!archivo){
-        printf("Error en la apertura del archivo\n");
+        printf("Error en la apertura del archivo '%s'\n",filename);
     }else{
         fseek(archivo,0,SEEK_END);
         cantReg=ftell(archivo)/elemento;
-        fclose(archivo);
     }
+
+    fclose(archivo);
 
     return cantReg;
 }

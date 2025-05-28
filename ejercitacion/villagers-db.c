@@ -23,9 +23,23 @@ typedef struct{
     char string[BUFFERLEN];
 }buffer_t;
 
+typedef enum{
+    INICIO=0,
+    OPCIONUNO,
+    OPCIONDOS,
+    OPCIONTRES,
+    OPCIONCUATRO,
+    OPCIONCINCO,
+    OPCIONSEIS,
+    OPCIONSIETE,
+    SALIDA
+}menu_t;
+
 int txttoarray(FILE*,char*,buffer_t[]);
 int parse_lines(buffer_t[],villager_t[],int);
 void write_to_dat(FILE*,char*,villager_t[],int);
+void list_villagers(FILE*,char*);
+void display_one_v(FILE*,char*);
 
 int main(void){
     //fn: filename
@@ -34,11 +48,45 @@ int main(void){
     char *fn_villagers="villagers.dat";
     buffer_t sbuffer[MAX_VILL];
     villager_t parsed_list[MAX_VILL];
+    int op=0;
+    int input=0;
 
     int index=txttoarray(f,"villagers.txt",sbuffer);
     index=parse_lines(sbuffer,parsed_list,index);
-    crearArchivo(file_v,fn_villagers);
+    if(!existe(file_v,fn_villagers)) crearArchivo(file_v,fn_villagers);
     write_to_dat(file_v,fn_villagers,parsed_list,index);
+    
+    do{
+        printf("\n\n||| NAVIGATION MENU |||\n");
+        printf("\nSelect an option:");
+        printf("\n[1] List all Villagers.");
+        printf("\n[2] Show one villager.");
+        printf("\n[%d] Finalizar.",SALIDA);
+        op=leerEntero("\nOption: ");
+
+        switch(op){
+        case OPCIONUNO:
+            fflush(stdin);
+            list_villagers(file_v,fn_villagers);
+            break;
+        case OPCIONDOS:
+            int index=contarRegistros(file_v,fn_villagers,sizeof(villager_t));
+            printf("\nNumber of registered villagers: %d\n",index);
+
+            do{
+                input=leerEntero("Select a villager number: ");
+                if(input>index||input<0) printf("\nError. Type again.");
+            }while(input>index||input<0);
+
+            break;
+        case SALIDA:
+            printf("\nHasta luego.\n");
+            break;
+        default:
+            printf("\nIngreso un valor invalido.\n");
+            break;
+        }
+    }while(op!=SALIDA);
 
     return 0;
 }
@@ -69,7 +117,6 @@ int txttoarray(FILE *archivo, char *nda, buffer_t cad[]){
 
 int parse_lines(buffer_t raw[], villager_t parsed[],int count){
     buffer_t aux;
-    int cod;
     char *token;
 
     for(int i=0;i<count;i++){
@@ -94,27 +141,20 @@ int parse_lines(buffer_t raw[], villager_t parsed[],int count){
         if (!token) return 0;
         strncpy(parsed[i].birthmonth,token,sizeof(parsed[i].birthmonth));
         parsed[i].birthmonth[sizeof(parsed[i].birthmonth)-1]='\0';
-
-        return i;
     }
 
     printf("\nAll lines parsed.\n");
-    
+    return count;
 }
 
 void write_to_dat(FILE *f, char *fn, villager_t list[], int index){
-    villager_t aux;
-    f=fopen(fn,"rb+");
+    f=fopen(fn,"wb");
 
     if(!f){
         printf("\n'%s' couldn't be read.\n",fn);
     }else{
         for(int i=0;i<index;i++){
-            aux=list[i];
-            fwrite(aux.name,sizeof(aux.name),1,f);
-            fwrite(aux.pers,sizeof(aux.pers),1,f);
-            fwrite(&aux.birthday,sizeof(int),1,f);
-            fwrite(&aux.birthmonth,sizeof(aux.birthmonth),1,f);
+            fwrite(&list[i], sizeof(villager_t),1,f);
         }
         printf("\nData writen to '%s'",fn);
     }
@@ -122,5 +162,38 @@ void write_to_dat(FILE *f, char *fn, villager_t list[], int index){
     fclose(f);
 }
 
+void list_villagers(FILE *f,char *fn){
+    villager_t v;
+    f=fopen(fn,"rb");
+
+    if(!f){
+        printf("\n'%s' couldn't be read.\n",fn);
+    }else{
+        
+        printf("\nVILLAGER LIST:\n");
+        linea(20);
+        fread(&v,sizeof(v),1,f);
+        
+        while(!feof(f)){
+            printf("\nName: %s\nPersonality: %s\nBirthday: %s %d\n",v.name,v.pers,v.birthmonth,v.birthday);
+            linea(20);
+
+            fread(&v,sizeof(v),1,f);
+        }
+    }
+
+}
+
+void display_one_v(FILE *f, char *fn){
+    f=fopen(fn,"rb");
+
+    if(f){
+
+    }else{
+        printf("\n'%s' couldn't be read.\n",fn);
+    }
+
+    fclose(f);
+}
 
 
