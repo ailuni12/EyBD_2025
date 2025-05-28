@@ -15,6 +15,14 @@ int main(void){
     char raw[MAX_LINE][MAX_CAD];
     
     copiar_raw(raw);
+    
+    printf("\n\nTexto:\n");
+    for(int i=0;i<=MAX_LINE;i++){
+        printf("%c",bintodec(raw[i]));
+    }
+
+    printf("\n%c",bintodec(raw[27]));
+    printf("\n%s",raw[27]);
 
     return 0;
 }
@@ -25,7 +33,7 @@ int bintodec(char *numerobin){
 
     //binario a decimal
 
-    for(int i=(sizeof(numerobin)-1);i>=0;i--){
+    for(int i=MAX_CAD-3;i>=0;i--){
         if(numerobin[j]=='1'){
             output+=pow(2,i);
         }
