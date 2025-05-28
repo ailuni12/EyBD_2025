@@ -39,7 +39,7 @@ int txttoarray(FILE*,char*,buffer_t[]);
 int parse_lines(buffer_t[],villager_t[],int);
 void write_to_dat(FILE*,char*,villager_t[],int);
 void list_villagers(FILE*,char*);
-void display_one_v(FILE*,char*);
+void display_one_v(FILE*,char*,int);
 
 int main(void){
     //fn: filename
@@ -49,12 +49,16 @@ int main(void){
     buffer_t sbuffer[MAX_VILL];
     villager_t parsed_list[MAX_VILL];
     int op=0;
+    int index=0;
     int input=0;
-
-    int index=txttoarray(f,"villagers.txt",sbuffer);
-    index=parse_lines(sbuffer,parsed_list,index);
-    if(!existe(file_v,fn_villagers)) crearArchivo(file_v,fn_villagers);
-    write_to_dat(file_v,fn_villagers,parsed_list,index);
+    
+    if(!existe(file_v,fn_villagers)){
+        index=txttoarray(f,"villagers.txt",sbuffer);
+        index=parse_lines(sbuffer,parsed_list,index);
+        crearArchivo(file_v,fn_villagers);
+        write_to_dat(file_v,fn_villagers,parsed_list,index);
+    }
+    index=contarRegistros(file_v,fn_villagers,sizeof(villager_t));
     
     do{
         printf("\n\n||| NAVIGATION MENU |||\n");
@@ -70,14 +74,12 @@ int main(void){
             list_villagers(file_v,fn_villagers);
             break;
         case OPCIONDOS:
-            int index=contarRegistros(file_v,fn_villagers,sizeof(villager_t));
             printf("\nNumber of registered villagers: %d\n",index);
-
             do{
                 input=leerEntero("Select a villager number: ");
                 if(input>index||input<0) printf("\nError. Type again.");
             }while(input>index||input<0);
-
+            display_one_v(file_v, fn_villagers, input-1);
             break;
         case SALIDA:
             printf("\nHasta luego.\n");
@@ -184,13 +186,18 @@ void list_villagers(FILE *f,char *fn){
 
 }
 
-void display_one_v(FILE *f, char *fn){
+void display_one_v(FILE *f,char *fn,int input){
+    villager_t v;
     f=fopen(fn,"rb");
 
-    if(f){
-
-    }else{
+    if(!f){
         printf("\n'%s' couldn't be read.\n",fn);
+    }else{
+        fseek(f,sizeof(villager_t)*input,SEEK_SET);
+        fread(&v,sizeof(villager_t),1,f);
+        printf("\nVILLAGER INFO:\n");
+        printf("\nName: %s\nPersonality: %s\nBirthday: %s %d\n",v.name,v.pers,v.birthmonth,v.birthday);
+        linea(20);
     }
 
     fclose(f);
