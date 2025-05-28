@@ -12,18 +12,6 @@
 #define MAX_VILL 30
 #define BUFFERLEN 100
 
-typedef enum{
-    INICIO=0,
-    OPCIONUNO,
-    OPCIONDOS,
-    OPCIONTRES,
-    OPCIONCUATRO,
-    OPCIONCINCO,
-    OPCIONSEIS,
-    OPCIONSIETE,
-    SALIDA
-}menu_t;
-
 typedef struct{
     char name[30];
     char pers[30];
@@ -35,8 +23,9 @@ typedef struct{
     char string[BUFFERLEN];
 }buffer_t;
 
-int txttoarray(FILE *,char *,buffer_t[]);
-int parse_line(buffer_t[],villager_t[],int);
+int txttoarray(FILE*,char*,buffer_t[]);
+int parse_lines(buffer_t[],villager_t[],int);
+void write_to_dat(FILE*,char*,villager_t[],int);
 
 int main(void){
     //fn: filename
@@ -47,6 +36,9 @@ int main(void){
     villager_t parsed_list[MAX_VILL];
 
     int index=txttoarray(f,"villagers.txt",sbuffer);
+    index=parse_lines(sbuffer,parsed_list,index);
+    crearArchivo(file_v,fn_villagers);
+    write_to_dat(file_v,fn_villagers,parsed_list,index);
 
     return 0;
 }
@@ -75,7 +67,7 @@ int txttoarray(FILE *archivo, char *nda, buffer_t cad[]){
     
 }
 
-int parse_line(buffer_t original[], villager_t final[],int count){
+int parse_lines(buffer_t original[], villager_t final[],int count){
     buffer_t aux;
     int cod;
     char *token;
@@ -105,6 +97,30 @@ int parse_line(buffer_t original[], villager_t final[],int count){
 
         return i;
     }
+
+    printf("\nAll lines parsed.\n");
     
 }
+
+void write_to_dat(FILE *f, char *fn, villager_t list[], int index){
+    villager_t aux;
+    f=fopen(fn,"rb+");
+
+    if(!f){
+        printf("\n'%s' couldn't be read.\n",fn);
+    }else{
+        for(int i=0;i<index;i++){
+            aux=list[i];
+            fwrite(aux.name,sizeof(aux.name),1,f);
+            fwrite(aux.pers,sizeof(aux.pers),1,f);
+            fwrite(&aux.birthday,sizeof(int),1,f);
+            fwrite(&aux.birthmonth,sizeof(aux.birthmonth),1,f);
+        }
+        printf("\nData writen to '%s'",fn);
+    }
+
+    fclose(f);
+}
+
+
 
