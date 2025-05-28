@@ -4,12 +4,11 @@
 #include <math.h>
 #include "utiles.h"
 
-#define MAX_LINE 27
+#define MAX_LINE 29
 #define MAX_CAD 10
 
 int bintodec(char *);
 void copiar_raw(char[][MAX_CAD]);
-void printASCII(int);
 
 int main(void){
     char raw[MAX_LINE][MAX_CAD];
@@ -17,12 +16,9 @@ int main(void){
     copiar_raw(raw);
     
     printf("\n\nTexto:\n");
-    for(int i=0;i<=MAX_LINE;i++){
+    for(int i=0;i<MAX_LINE;i++){
         printf("%c",bintodec(raw[i]));
     }
-
-    printf("\n%c",bintodec(raw[27]));
-    printf("\n%s",raw[27]);
 
     return 0;
 }
@@ -52,12 +48,12 @@ void copiar_raw(char raw[MAX_LINE][MAX_CAD]){
     if(!f){
         printf("Error al abrir el archivo '%s'",fn);
     }else{
-        for(int i=0;i<=MAX_LINE;i++){
+        for(int i=0;i<MAX_LINE;i++){
             fgets(raw[i],MAX_CAD,f);
             limpiarNewline(raw[i]); 
         }
 
-        for(int i=0;i<=MAX_LINE;i++){
+        for(int i=0;i<MAX_LINE;i++){
             printf("\n[%d]:%s",i,raw[i]);
         }
     }
