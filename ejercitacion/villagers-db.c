@@ -78,8 +78,8 @@ int main(void){
         case OPCIONDOS:
             do{
                 input=leerEntero("Select a villager number: ");
-                if(input>index||input<0) printf("\nError. Type again.");
-            }while(input>index||input<0);
+                if(input>=index||input<0) printf("\nError. Type again.");
+            }while(input>=index||input<0);
             display_one_v(file_v, fn_villagers, input-1);
             break;
         case SALIDA:
@@ -157,7 +157,7 @@ void write_to_dat(FILE *f, char *fn, villager_t list[], int index){
         printf("\n'%s' couldn't be read.\n",fn);
     }else{
         for(int i=0;i<index;i++){
-            fwrite(&list[i], sizeof(villager_t),1,f);
+            fwrite(&list[i],sizeof(villager_t),1,f);
         }
         printf("\nData writen to '%s'",fn);
     }
