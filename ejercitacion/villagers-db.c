@@ -10,6 +10,7 @@
 #include "utiles.h"
 
 #define MAX_VILL 30
+#define BUFFERLEN 100
 
 typedef enum{
     INICIO=0,
@@ -31,18 +32,79 @@ typedef struct{
 }villager_t;
 
 typedef struct{
-    char string[80];
+    char string[BUFFERLEN];
 }buffer_t;
 
-int procesarRegistro(FILE *, char *, buffer_t []);
+int txttoarray(FILE *,char *,buffer_t[]);
+int parse_line(buffer_t[],villager_t[],int);
 
 int main(void){
     //fn: filename
     FILE *file_v;
+    FILE *f;
     char *fn_villagers="villagers.dat";
+    buffer_t sbuffer[MAX_VILL];
+    villager_t parsed_list[MAX_VILL];
 
-    imprimir_texto(file_v,"villagers.txt");
+    int index=txttoarray(f,"villagers.txt",sbuffer);
 
     return 0;
+}
+
+int txttoarray(FILE *archivo, char *nda, buffer_t cad[]){
+    //copia las lineas del archivo de texto una por una a un array de structs
+    char buffer[BUFFERLEN];
+    int i=0;
+
+    archivo=fopen(nda,"r");
+
+    if(archivo){
+        while(i<MAX_VILL && fgets(buffer,BUFFERLEN+1,archivo)){
+        strcpy(cad[i].string,buffer);
+        i++;
+        }
+        printf("\nVillager list copied.");
+    }else{
+        printf("\n'%s' couldn't be read.\n",nda);
+    }
+
+    fclose(archivo);
+
+    //retorna la cantidad de lineas leidas
+    return i;
+    
+}
+
+int parse_line(buffer_t original[], villager_t final[],int count){
+    buffer_t aux;
+    int cod;
+    char *token;
+
+    for(int i=0;i<count;i++){
+        strncpy(aux.string,original[i].string,sizeof(aux.string));
+        aux.string[sizeof(aux.string)-1]='\0';
+
+        token=strtok(aux.string,",");
+        if (!token) return 0;
+        strncpy(final[i].name,token,sizeof(final[i].name));
+        final[i].name[sizeof(final[i].name)-1]='\0';
+
+        token=strtok(NULL,",");
+        if (!token) return 0;
+        strncpy(final[i].pers,token,sizeof(final[i].pers));
+        final[i].pers[sizeof(final[i].pers)-1]='\0';
+
+        token=strtok(NULL,",");
+        if (!token) return 0;
+        final[i].birthday=atoi(token);
+
+        token=strtok(NULL,",");
+        if (!token) return 0;
+        strncpy(final[i].birthmonth,token,sizeof(final[i].birthmonth));
+        final[i].birthmonth[sizeof(final[i].birthmonth)-1]='\0';
+
+        return i;
+    }
+    
 }
 
