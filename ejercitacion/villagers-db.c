@@ -67,33 +67,33 @@ int txttoarray(FILE *archivo, char *nda, buffer_t cad[]){
     
 }
 
-int parse_lines(buffer_t original[], villager_t final[],int count){
+int parse_lines(buffer_t raw[], villager_t parsed[],int count){
     buffer_t aux;
     int cod;
     char *token;
 
     for(int i=0;i<count;i++){
-        strncpy(aux.string,original[i].string,sizeof(aux.string));
+        strncpy(aux.string,raw[i].string,sizeof(aux.string));
         aux.string[sizeof(aux.string)-1]='\0';
 
         token=strtok(aux.string,",");
         if (!token) return 0;
-        strncpy(final[i].name,token,sizeof(final[i].name));
-        final[i].name[sizeof(final[i].name)-1]='\0';
+        strncpy(parsed[i].name,token,sizeof(parsed[i].name));
+        parsed[i].name[sizeof(parsed[i].name)-1]='\0';
 
         token=strtok(NULL,",");
         if (!token) return 0;
-        strncpy(final[i].pers,token,sizeof(final[i].pers));
-        final[i].pers[sizeof(final[i].pers)-1]='\0';
+        strncpy(parsed[i].pers,token,sizeof(parsed[i].pers));
+        parsed[i].pers[sizeof(parsed[i].pers)-1]='\0';
 
         token=strtok(NULL,",");
         if (!token) return 0;
-        final[i].birthday=atoi(token);
+        parsed[i].birthday=atoi(token);
 
-        token=strtok(NULL,",");
+        token=strtok(NULL,".");
         if (!token) return 0;
-        strncpy(final[i].birthmonth,token,sizeof(final[i].birthmonth));
-        final[i].birthmonth[sizeof(final[i].birthmonth)-1]='\0';
+        strncpy(parsed[i].birthmonth,token,sizeof(parsed[i].birthmonth));
+        parsed[i].birthmonth[sizeof(parsed[i].birthmonth)-1]='\0';
 
         return i;
     }
