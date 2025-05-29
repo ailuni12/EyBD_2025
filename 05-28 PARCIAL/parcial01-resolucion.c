@@ -4,12 +4,12 @@
 #include <stdbool.h>
 #include "utiles.h"
 #define TAM 20
-#define MAX 100
+#define MAX 30
 #define ARCH_TIEMPOS2 "tiempos2.dat"
 #define ARCH_RESULTADOS "resultados2.dat"
 #define ARCH_CORREDORES "corredores.dat"
 #define ARCH_CONFIG "config.txt"
-#define F_ERROR "El Archivo %s No pudo Abrirse!!\n"
+#define F_ERROR "ERROR, no se pudo abrir "
 
 typedef struct
 {
@@ -54,7 +54,9 @@ void MostrarPromedioTiempoVuelta(); // opci�n 3
 void MostrarMejorTiempoVuelta(); // opci�n 4
 void Menu();
 int contarvueltas();
-bool validarcorredor(int [],int, int);
+bool validarcorredor(Corredor [],int, int);
+int mostrarindice(Corredor [],int,int);
+
 
 int main()
 {
@@ -94,51 +96,60 @@ int main()
 
 void MostrarPromedioTiempoVuelta()
 {
-    FILE *f_corredores;
-    //FILE *f_tiempos;
-    char *fn_corredores="corredores.dat";
-    //char *fn_tiempos="tiempos2.dat";
-    int indiceCorredores=contarRegistros(f_corredores,fn_corredores,sizeof(Corredor));
-    //int vueltas=contarvueltas();
+    FILE *f_corredores=fopen(ARCH_CORREDORES,"rb");
+    FILE *f_tiempos=fopen(ARCH_TIEMPOS2,"rb");
+    
+    int indiceCorredores=contarRegistros(f_corredores,ARCH_CORREDORES,sizeof(Corredor));
+    int vueltas=contarvueltas(indiceCorredores);
+    
     Corredor auxc;
-    //tiempos auxt;
-    int input=0, i=0,indice=-1;
-    int listacodigos[MAX];
+    tiempos auxt;
     Corredor corredores[MAX];
-
-    f_corredores=fopen(fn_corredores,"rb");
+    tiempos listatiempos[MAX];
+    
+    int input=0, i=0,indice=-1;
 
     if(!f_corredores){
-        printf("%s",F_ERROR);
+        printf("%s'%s'\n",F_ERROR,ARCH_CORREDORES);
     }else{
         fread(&auxc,sizeof(auxc),1,f_corredores);
         while(!feof(f_corredores)){
             corredores[i]=auxc;
-            listacodigos[i]=auxc.numcorredor;
-
             fread(&auxc,sizeof(auxc),1,f_corredores);
             i++;
         }
+        i=0;
+        fread(&auxt,sizeof(auxt),1,f_tiempos);
+        while(!feof(f_tiempos)){
+            listatiempos[i]=auxt;
+            fread(&auxt,sizeof(auxt),1,f_tiempos);
+            i++;
+        }
+
+        rewind(f_corredores);
+        rewind(f_tiempos);
 
         do{
             fflush(stdin);
             input=leerEntero("\nIngrese el num de corredor: ");
             
-            if(!validarcorredor(listacodigos,input,indiceCorredores)){
+            if(!validarcorredor(corredores,input,indiceCorredores)){
                 printf("numero invalido");
             }
-        }while(!validarcorredor(listacodigos,input,indiceCorredores));
+        }while(!validarcorredor(corredores,input,indiceCorredores));
 
         indice=mostrarindice(corredores,input,indiceCorredores);
 
-        printf("%d\n",corredores[indice].numcorredor);
+
+
+        printf("[%d] %s %s | %s\n",corredores[indice].numcorredor,corredores[indice].nombre,corredores[indice].apellido,corredores[indice].escuderia);
+
 
     }
 
     fclose(f_corredores);
+    fclose(f_tiempos);
     system("pause");
-
-
 }
 
 int contarvueltas(int cantregistros){
@@ -159,9 +170,9 @@ int contarvueltas(int cantregistros){
     return numvueltas;
 }
 
-bool validarcorredor(int lista[],int codigo, int indice){
+bool validarcorredor(Corredor lista[],int codigo, int indice){
     for(int i=0;i<indice;i++){
-        if(lista[i]==codigo){
+        if(lista[i].numcorredor==codigo){
             return true;
         }
     }
@@ -176,6 +187,7 @@ int mostrarindice(Corredor lista[],int codigo,int indice){
     }
     return 0;
 }
+
 
 void MostrarMejorTiempoVuelta()
 {
@@ -211,7 +223,7 @@ void Menu()
     char circuito[15];
     char version[5];
 
-    system("cls");
+    //system("cls");
     mostrarVersion(aplicacion, circuito, version);
     printf("-------------------------------------\n");
     printf("\t\tMENU DE OPCIONES\n");
