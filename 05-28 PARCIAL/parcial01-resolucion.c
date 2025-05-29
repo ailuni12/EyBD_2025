@@ -9,6 +9,7 @@
 #define ARCH_RESULTADOS "resultados2.dat"
 #define ARCH_CORREDORES "corredores.dat"
 #define ARCH_CONFIG "config.txt"
+#define F_ERROR "El Archivo %s No pudo Abrirse!!\n"
 
 typedef struct
 {
@@ -53,7 +54,6 @@ void MostrarPromedioTiempoVuelta(); // opci�n 3
 void MostrarMejorTiempoVuelta(); // opci�n 4
 void Menu();
 int contarvueltas();
-int contarcorredores();
 bool validarcorredor(int [],int, int);
 
 int main()
@@ -98,8 +98,8 @@ void MostrarPromedioTiempoVuelta()
     //FILE *f_tiempos;
     char *fn_corredores="corredores.dat";
     //char *fn_tiempos="tiempos2.dat";
+    int indiceCorredores=contarRegistros(f_corredores,fn_corredores,sizeof(Corredor));
     //int vueltas=contarvueltas();
-    int indiceCorredores=contarcorredores();
     Corredor auxc;
     //tiempos auxt;
     int input=0, i=0,indice=-1;
@@ -109,7 +109,7 @@ void MostrarPromedioTiempoVuelta()
     f_corredores=fopen(fn_corredores,"rb");
 
     if(!f_corredores){
-        printf("El Archivo %s No pudo Abrirse!!\n",fn_corredores);
+        printf("%s",F_ERROR);
     }else{
         fread(&auxc,sizeof(auxc),1,f_corredores);
         while(!feof(f_corredores)){
@@ -141,51 +141,22 @@ void MostrarPromedioTiempoVuelta()
 
 }
 
-int contarvueltas(){
-    FILE *f_corredores;
+int contarvueltas(int cantregistros){
     FILE *f_tiempos;
-    char *fn_corredores="corredores.dat";
     char *fn_tiempos="tiempos2.dat";
-    int indiceCorredores=0;
     int numvueltas=0;
-
-    f_corredores=fopen(fn_corredores,"rb");
-
-    if(!f_corredores){
-        printf("error");
-    }else{
-        indiceCorredores=contarRegistros(f_corredores,fn_corredores,sizeof(Corredor));
-    }
-    fclose(f_corredores);
     
     f_tiempos=fopen(fn_tiempos,"rb");
 
     if(!f_tiempos){
         printf("error");
     }else{
-        numvueltas=contarRegistros(f_tiempos,fn_tiempos,sizeof(tiempos))/indiceCorredores;
+        numvueltas=contarRegistros(f_tiempos,fn_tiempos,sizeof(tiempos))/cantregistros;
     }
 
     fclose(f_tiempos);
 
     return numvueltas;
-}
-
-int contarcorredores(){
-    FILE *f_corredores;
-    char *fn_corredores="corredores.dat";
-    int indiceCorredores=0;
-
-    f_corredores=fopen(fn_corredores,"rb");
-
-    if(!f_corredores){
-        printf("error");
-    }else{
-        indiceCorredores=contarRegistros(f_corredores,fn_corredores,sizeof(Corredor));
-    }
-    fclose(f_corredores);
-
-    return indiceCorredores;
 }
 
 bool validarcorredor(int lista[],int codigo, int indice){
