@@ -5,6 +5,7 @@
 #include "utiles.h"
 #define TAM 20
 #define MAX 30
+#define MAXTIEMPOS 230
 #define ARCH_TIEMPOS2 "tiempos2.dat"
 #define ARCH_RESULTADOS "resultados2.dat"
 #define ARCH_CORREDORES "corredores.dat"
@@ -56,6 +57,8 @@ void Menu();
 int contarvueltas();
 bool validarcorredor(Corredor [],int, int);
 int mostrarindice(Corredor [],int,int);
+float calcularpromediovueltas(tiempos [],int,int,int);
+float calcularmejorvuelta(tiempos [],int,int,int);
 
 
 int main()
@@ -89,7 +92,6 @@ int main()
         scanf("%d", &opcion);
     }
     printf("\n\nsaliendo del sistema .....!!!\n\n");
-    system("pause");
     return 0;
 }
 
@@ -105,51 +107,45 @@ void MostrarPromedioTiempoVuelta()
     Corredor auxc;
     tiempos auxt;
     Corredor corredores[MAX];
-    tiempos listatiempos[MAX];
+    tiempos listatiempos[MAXTIEMPOS];
     
-    int input=0, i=0,indice=-1;
+    int input=0, i=0,j=0,indice=-1;
 
     if(!f_corredores){
         printf("%s'%s'\n",F_ERROR,ARCH_CORREDORES);
     }else{
-        fread(&auxc,sizeof(auxc),1,f_corredores);
-        while(!feof(f_corredores)){
-            corredores[i]=auxc;
-            fread(&auxc,sizeof(auxc),1,f_corredores);
-            i++;
-        }
-        i=0;
-        fread(&auxt,sizeof(auxt),1,f_tiempos);
-        while(!feof(f_tiempos)){
-            listatiempos[i]=auxt;
-            fread(&auxt,sizeof(auxt),1,f_tiempos);
-            i++;
-        }
-
-        rewind(f_corredores);
-        rewind(f_tiempos);
-
-        do{
-            fflush(stdin);
-            input=leerEntero("\nIngrese el num de corredor: ");
-            
-            if(!validarcorredor(corredores,input,indiceCorredores)){
-                printf("numero invalido");
+        if(!f_tiempos){
+            printf("%s'%s'\n",F_ERROR,ARCH_TIEMPOS2); 
+        }else{
+            while(fread(&auxc,sizeof(auxc),1,f_corredores)==1){
+                corredores[i++]=auxc;
             }
-        }while(!validarcorredor(corredores,input,indiceCorredores));
+            while(fread(&auxt,sizeof(auxt),1,f_tiempos)==1){
+                listatiempos[j++]=auxt;
+            }
+            printf("Seleccione el corredor para ver sus estadisticas");
+            do{
+                fflush(stdin);
+                input=leerEntero("\nNum de corredor: ");
+                
+                if(!validarcorredor(corredores,input,indiceCorredores)){
+                    PNL
+                    printf("Numero de corredor incorrecto");
+                    PNL
+                }
+            }while(!validarcorredor(corredores,input,indiceCorredores));
+            indice=mostrarindice(corredores,input,indiceCorredores);
 
-        indice=mostrarindice(corredores,input,indiceCorredores);
-
-
-
-        printf("[%d] %s %s | %s\n",corredores[indice].numcorredor,corredores[indice].nombre,corredores[indice].apellido,corredores[indice].escuderia);
-
-
+            PNL
+            printf("[%d] %s %s | %s",corredores[indice].numcorredor,corredores[indice].nombre,corredores[indice].apellido,corredores[indice].escuderia);
+            printf("Tiempo promedio de vuelta: %.3f",calcularpromediovueltas(listatiempos,input,indiceCorredores,vueltas));
+            PNL
+            PNL
+        }
     }
 
     fclose(f_corredores);
     fclose(f_tiempos);
-    system("pause");
 }
 
 int contarvueltas(int cantregistros){
@@ -188,12 +184,75 @@ int mostrarindice(Corredor lista[],int codigo,int indice){
     return 0;
 }
 
+float calcularpromediovueltas(tiempos t[],int input,int cantcorredores,int vueltas){
+    float t_vuelta=0;
+    for(int i=0;i<(cantcorredores*vueltas);i++){
+        if(t[i].numcorredor==input){
+            t_vuelta+=t[i].tiempo;
+        }
+    }
+    return t_vuelta/vueltas;
+}
 
 void MostrarMejorTiempoVuelta()
 {
-    // COMPLETAR UDS.....
-    printf("OPCION 04 A DESARROLLAR\n");
-    system("pause");
+    FILE *f_corredores=fopen(ARCH_CORREDORES,"rb");
+    FILE *f_tiempos=fopen(ARCH_TIEMPOS2,"rb");
+    
+    int indiceCorredores=contarRegistros(f_corredores,ARCH_CORREDORES,sizeof(Corredor));
+    int vueltas=contarvueltas(indiceCorredores);
+    
+    Corredor auxc;
+    tiempos auxt;
+    Corredor corredores[MAX];
+    tiempos listatiempos[MAXTIEMPOS];
+    
+    int input=0, i=0,j=0,indice=-1;
+
+    if(!f_corredores){
+        printf("%s'%s'\n",F_ERROR,ARCH_CORREDORES);
+    }else{
+        if(!f_tiempos){
+            printf("%s'%s'\n",F_ERROR,ARCH_TIEMPOS2); 
+        }else{
+            while(fread(&auxc,sizeof(auxc),1,f_corredores)==1){
+                corredores[i++]=auxc;
+            }
+            while(fread(&auxt,sizeof(auxt),1,f_tiempos)==1){
+                listatiempos[j++]=auxt;
+            }
+            printf("Seleccione la vuelta para ver el mejor tiempo");
+            do{
+                fflush(stdin);
+                input=leerEntero("\nNum de vuelta: ");
+                
+                if(input>vueltas||input<0){
+                    PNL
+                    printf("Numero de vuelta incorrecto");
+                    PNL
+                }
+            }while(input>vueltas||input<0);
+
+            PNL
+            printf("Mejor tiempo vuelta %d: %.3f",input,calcularmejorvuelta(listatiempos,input,vueltas,indiceCorredores));
+            PNL
+        }
+    }
+
+    fclose(f_corredores);
+    fclose(f_tiempos);
+}
+
+float calcularmejorvuelta(tiempos t[],int v,int vueltas,int cantcorredores){
+    float mejortiempo;
+    for(int i=v*cantcorredores;i<(v*cantcorredores)+cantcorredores;i++){
+        for(int j=v*cantcorredores;j<(v*cantcorredores)+cantcorredores-i;j++){
+            if(t[j].tiempo<t[j+1].tiempo){
+                mejortiempo=t[j].tiempo;
+            }
+        }
+    }
+    return mejortiempo;
 }
 
 void mostrarVersion(char *aplicacion, char *circuito, char *version)

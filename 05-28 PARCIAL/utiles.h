@@ -1,12 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
-#ifndef UTILES_H_  // guardas de inclusión
-#define UTILES_H_
-
 #include <stdio.h>
 #include <conio.h>
 #include <string.h>
 #include <stdbool.h>
+
+#ifndef UTILES_H_  // guardas de inclusión
+#define UTILES_H_
+#define PNL printf("\n");
 
 void crearArchivo(FILE *, char *);
 void limpiarNewline(char *);
