@@ -48,7 +48,7 @@ typedef struct
 }tiempoParcial_t;
 
 
-void MostrarVersion(char *aplicacion, char *circuito, char *version);
+void mostrarVersion(char *aplicacion, char *circuito, char *version);
 void MostrarCorredores();
 void MostrarTiempos();
 void MostrarPromedioTiempoVuelta(); // opci�n 3
@@ -205,7 +205,7 @@ void MostrarMejorTiempoVuelta()
     FILE *f_tiempos=fopen(ARCH_TIEMPOS2,"rb");
     
     int indiceCorredores=contarRegistros(f_corredores,ARCH_CORREDORES,sizeof(Corredor));
-    int vueltas=contarvueltas(indiceCorredores);
+    int vueltas=contarvueltas(indiceCorredores)-1;
     
     Corredor auxc;
     tiempos auxt;
@@ -241,7 +241,7 @@ void MostrarMejorTiempoVuelta()
             indice=calcularmejorvuelta(listatiempos,input,vueltas,indiceCorredores);
             indice=mostrarindice(corredores,listatiempos[indice].numcorredor,indiceCorredores);
             PNL
-            printf("[%d] %s %s | %s",corredores[indice].numcorredor,corredores[indice].nombre,corredores[indice].apellido,corredores[indice].escuderia);
+            printf("Corredor: [%d] %s %s | %s",corredores[indice].numcorredor,corredores[indice].nombre,corredores[indice].apellido,corredores[indice].escuderia);
             PNL
         }
     }
