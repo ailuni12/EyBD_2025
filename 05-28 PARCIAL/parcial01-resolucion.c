@@ -58,12 +58,17 @@ int contarvueltas();
 bool validarcorredor(Corredor [],int, int);
 int mostrarindice(Corredor [],int,int);
 float calcularpromediovueltas(tiempos [],int,int,int);
-float calcularmejorvuelta(tiempos [],int,int,int);
+int calcularmejorvuelta(tiempos [],int,int,int);
 
 
 int main()
 {
     int opcion;
+    char aplicacion[15];
+    char circuito[15];
+    char version[5];
+    mostrarVersion(aplicacion, circuito, version);
+    
     Menu();
     printf("Ingrese la opcion deseada:\n");
     scanf("%d", &opcion);
@@ -233,8 +238,10 @@ void MostrarMejorTiempoVuelta()
                 }
             }while(input>vueltas||input<0);
 
+            indice=calcularmejorvuelta(listatiempos,input,vueltas,indiceCorredores);
+            indice=mostrarindice(corredores,listatiempos[indice].numcorredor,indiceCorredores);
             PNL
-            printf("Mejor tiempo vuelta %d: %.3f",input,calcularmejorvuelta(listatiempos,input,vueltas,indiceCorredores));
+            printf("[%d] %s %s | %s",corredores[indice].numcorredor,corredores[indice].nombre,corredores[indice].apellido,corredores[indice].escuderia);
             PNL
         }
     }
@@ -243,7 +250,8 @@ void MostrarMejorTiempoVuelta()
     fclose(f_tiempos);
 }
 
-float calcularmejorvuelta(tiempos t[],int v,int vueltas,int cantcorredores){
+int calcularmejorvuelta(tiempos t[],int v,int vueltas,int cantcorredores){
+    int indice=0;
     float mejor=-1;
     int inicio=v*cantcorredores;
     int fin=inicio+cantcorredores-1;
@@ -251,10 +259,12 @@ float calcularmejorvuelta(tiempos t[],int v,int vueltas,int cantcorredores){
     for(int i=inicio;i<fin;i++) {
         if (mejor==-1||t[i].tiempo<mejor) {
             mejor=t[i].tiempo;
+            indice=i;
         }
     }
-
-    return mejor;
+    PNL
+    printf("Mejor tiempo vuelta %d: %.3f",v,mejor);
+    return indice;
 }
 
 void mostrarVersion(char *aplicacion, char *circuito, char *version)
@@ -280,12 +290,6 @@ void mostrarVersion(char *aplicacion, char *circuito, char *version)
 
 void Menu()
 {
-    char aplicacion[15];
-    char circuito[15];
-    char version[5];
-
-    //system("cls");
-    mostrarVersion(aplicacion, circuito, version);
     printf("-------------------------------------\n");
     printf("\t\tMENU DE OPCIONES\n");
     printf("1.Mostrar Listado de corredores.\n");
