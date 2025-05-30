@@ -244,15 +244,17 @@ void MostrarMejorTiempoVuelta()
 }
 
 float calcularmejorvuelta(tiempos t[],int v,int vueltas,int cantcorredores){
-    float mejortiempo;
-    for(int i=v*cantcorredores;i<(v*cantcorredores)+cantcorredores;i++){
-        for(int j=v*cantcorredores;j<(v*cantcorredores)+cantcorredores-i;j++){
-            if(t[j].tiempo<t[j+1].tiempo){
-                mejortiempo=t[j].tiempo;
-            }
+    float mejor=-1;
+    int inicio=v*cantcorredores;
+    int fin=inicio+cantcorredores-1;
+
+    for(int i=inicio;i<fin;i++) {
+        if (mejor==-1||t[i].tiempo<mejor) {
+            mejor=t[i].tiempo;
         }
     }
-    return mejortiempo;
+
+    return mejor;
 }
 
 void mostrarVersion(char *aplicacion, char *circuito, char *version)
