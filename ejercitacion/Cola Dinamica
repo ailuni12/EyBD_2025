@@ -1,0 +1,160 @@
+#include <stdio.h>
+#include <conio.h>
+#include <malloc.h>
+#define s scanf
+
+typedef struct
+{
+    int dato;
+    struct elemento *sig;
+} nodo_t;
+
+void acolar(nodo_t, nodo_t **, nodo_t **);
+nodo_t *nuevonodo(nodo_t);
+nodo_t desacolar(nodo_t **);
+void listar(nodo_t *);
+void vaciar(nodo_t **);
+nodo_t *verificar(nodo_t *);
+nodo_t ingresar_dato(void);
+void dato_eliminado(nodo_t);
+int menu(void);
+
+int main(void)
+{
+    nodo_t *p = NULL, *q, r;
+    int op;
+
+    do
+    {
+        op = menu();
+        switch (op)
+        {
+        case 1:
+            r = ingresar_dato();
+            acolar(r, &p, &q);
+            break;
+        case 2:
+            if (verificar(p) != NULL)
+                r = desacolar(&p);
+            dato_eliminado(r);
+            break;
+        case 3:
+            if (verificar(p) != NULL)
+                printf("\nContenido de la cola:\n\n");
+            listar(p);
+            getch();
+            break;
+        case 4:
+            if (verificar(p) != NULL)
+                vaciar(&p);
+            break;
+        }
+    } while (op < 5);
+
+    getch();
+    if (verificar(p) != NULL)
+    {
+        vaciar(&p);
+    }
+    return 0;
+}
+
+// CIERRA MAIN
+nodo_t *nuevonodo(nodo_t r)
+{
+    nodo_t *x;
+    x = (nodo_t *)malloc(sizeof(nodo_t));
+    x->dato = r.dato; //*x=r;
+    x->sig = NULL;
+    return (x);
+}
+
+void acolar(nodo_t r, nodo_t **p, nodo_t **q)
+{
+    nodo_t *nuevo;
+    nuevo = nuevonodo(r);
+    if (*p == NULL)
+    {
+        *p = nuevo;
+    }
+    else
+    {
+        (*q)->sig = nuevo;
+    }
+    *q = nuevo;
+}
+
+nodo_t desacolar(nodo_t **p)
+{
+    nodo_t *aux, r;
+    r = **p;
+    aux = *p;
+    *p = (*p)->sig;
+    free(aux);
+    return r;
+}
+
+void listar(nodo_t *p)
+{
+    if (p)
+    {
+        printf("\t\t%d\n", p->dato);
+        listar(p->sig);
+    }
+}
+
+void vaciar(nodo_t **p)
+{
+    nodo_t *aux;
+    while (*p != NULL)
+    {
+        aux = *p;
+        *p = (*p)->sig;
+        free(aux);
+    }
+}
+
+nodo_t *verificar(nodo_t *p)
+{
+    if (p == NULL)
+    {
+        printf("\nCola vacia!");
+        printf("\n\n\n\nPulse una tecla para continuar ... ");
+        getch();
+    }
+
+    return (p);
+}
+
+nodo_t ingresar_dato(void)
+{
+    nodo_t r;
+    printf("\nIngrese un nro .: ");
+    s("%d", &r.dato);
+    return (r);
+}
+
+void dato_eliminado(nodo_t r)
+{
+    printf("\nValor eliminado: %d", r.dato);
+    printf("\n\n\nPulse una tecla para continuar ... ");
+    getch();
+}
+
+int menu(void)
+{
+    int op;
+    printf("\n\n\t\tMENU DE OPCIONES");
+    do
+    {
+
+        printf("\n1. Acolar un elemento");
+        printf("\n2. Desacolar un elemento");
+        printf("\n3. Listar cola");
+        printf("\n4. Vaciar cola");
+        printf("\n5. Salir");
+        printf("\n\nIngrese una opcion: ");
+        s("%d", &op);
+    } while (op < 1 || op > 5);
+    return (op);
+}
