@@ -5,7 +5,7 @@
 #include <string.h>
 #define p printf
 #define s scanf
-#define salto printf(" ");
+#define salto printf("\n");
 
 #define FILE_ERROR "ERROR, no se pudo abrir "
 #define ARCH_1 "clientes.dat"
@@ -137,7 +137,7 @@ void ingresar(FILE *cl, FILE *ar)
 {
     regcli auxc;
     regarti auxa;
-    int input, posicion, i=1;
+    int input, posicion, i=0;
 
     salto
     p("NUEVO REGISTRO DE VENTA");
@@ -152,27 +152,55 @@ void ingresar(FILE *cl, FILE *ar)
         }else{
             rewind(ar);
             salto
-            p("Ingrese código de cliente [0 para finalizar]:");
+            p("Ingrese codigo de cliente [0 para finalizar]:");
             s("%d",&input);
 
-            while(input<0&input>5){
+            do{
+                while(input<0&input>5){
+                salto
                 p("ERROR. Ingrese un codigo valido: ");
                 s("%d",&input);
-            }
-
-            if(input!=0){
-                while(fread(&auxc,sizeof(auxc),1,cl)==1){
-                    if(input==auxc.cod_cli){
-                        posicion=i-1;
-                    }
-                    i++;
                 }
-                p("El cod en la posicion %d",posicion);
-            }else if(input==0){
-                salto
-                p("Selecciono '0'");
-                salto
-            }
+
+                if(input!=0){
+                    while(fread(&auxc,sizeof(auxc),1,cl)==1){
+                        if(input==auxc.cod_cli){
+                            posicion=i;
+                            p("Cliente encontrado: %s",auxc.nom_cli);
+                            salto
+                        }
+                        i++;
+                    }
+
+                    i=0;
+
+                    salto
+                    p("Ingrese codigo del articulo [0 para finalizar la venta]:");
+                    s("%d",&input);
+
+                    while(input<0&input>6){
+                    salto
+                    p("ERROR. Ingrese un codigo valido: ");
+                    s("%d",&input);
+                    }
+
+                    if(input!=0){
+                        while(fread(&auxa,sizeof(auxa),1,ar)==1){
+                            if(input==auxa.cod_art){
+                                p("Articulo: %s - Precio: %2.f - Stock: %d",auxa.nom_art,auxa.pre_art,auxa.sto_art);
+                                salto
+                            }
+                        i++;
+                        }
+                    }
+
+                }else if(input==0){
+                    salto
+                    p("Selecciono '0'");
+                    salto
+                }
+            }while(input!=0);
+
         }
     }
 }
