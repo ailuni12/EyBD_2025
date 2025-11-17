@@ -27,6 +27,11 @@ typedef struct
     float cuenta;
 } regcli;
 
+typedef struct{
+    regcli cliente;
+    regarti articulo;
+} venta_t;
+
 void inicio(FILE *, FILE *);
 void ingresar(FILE *, FILE *);
 void mostrar(FILE *, FILE *);
@@ -137,6 +142,7 @@ void ingresar(FILE *cl, FILE *ar)
 {
     regcli auxc;
     regarti auxa;
+    venta_t v;
     int input, posicion, posicion_art=0, stock=0, i=0;
     float precio=0;
 
@@ -153,7 +159,7 @@ void ingresar(FILE *cl, FILE *ar)
         }else{
             rewind(ar);
             salto
-            p("Ingrese codigo de cliente [0 para finalizar]:");
+            p("Ingrese codigo de cliente [0 para finalizar]: ");
             s("%d",&input);
 
             do{
@@ -168,6 +174,7 @@ void ingresar(FILE *cl, FILE *ar)
                         if(input==auxc.cod_cli){
                             posicion=i;
                             p("Cliente encontrado: %s",auxc.nom_cli);
+                            v.cliente=auxc;
                             salto
                         }
                         i++;
@@ -179,9 +186,8 @@ void ingresar(FILE *cl, FILE *ar)
                     p("Ingrese codigo del articulo [0 para finalizar la venta]: ");
                     s("%d",&input);
 
-                    rewind(ar);
-
                     do{
+                        rewind(ar);
                         while(input<0&input>6){
                         salto
                         p("ERROR. Ingrese un codigo valido: ");
@@ -194,7 +200,8 @@ void ingresar(FILE *cl, FILE *ar)
                                 salto
                                 precio=auxa.pre_art;
                                 stock=auxa.sto_art;
-                                posicion_art=input;
+                                posicion_art=i;
+                                v.articulo=auxa;
                             }
                             i++;
                         }
@@ -216,20 +223,20 @@ void ingresar(FILE *cl, FILE *ar)
                         fseek(cl,sizeof(auxc)*posicion,SEEK_SET);
                         fseek(ar,sizeof(auxa)*posicion_art,SEEK_SET);
 
-                        auxc.cuenta+=stock*precio;
+                        v.cliente.cuenta+=input*precio;
+                        v.articulo.sto_art-=input;
+                        v.articulo.fact_art+=input*precio;
 
-                        auxa.sto_art-=stock;
-                        auxa.fact_art+=stock*precio;
-
-                        fwrite(&auxc, sizeof(auxc), 1, cl);
-                        fwrite(&auxa, sizeof(auxa), 1, ar);
+                        fwrite(&v.cliente, sizeof(auxc), 1, cl);
+                        fwrite(&v.articulo, sizeof(auxa), 1, ar);
                         fflush(cl);
                         fflush(ar);
 
-                        p("Venta registrada: %.2f",stock*precio);
+                        salto
+                        p("Venta registrada: %.2f",input*precio);
 
                         salto
-                        p("Ingrese codigo del articulo [0 para finalizar la venta]:");
+                        p("Ingrese codigo del articulo [0 para finalizar la venta]: ");
                         s("%d",&input);
                     }while(input!=0);
 
@@ -239,8 +246,14 @@ void ingresar(FILE *cl, FILE *ar)
                     salto
                 }
             salto
-            p("Ingrese codigo de cliente [0 para finalizar]:");
+            p("Ingrese codigo de cliente [0 para finalizar]: ");
             s("%d",&input);
+
+            if(input==0){
+                salto
+                p("Selecciono '0'");
+                salto
+            }
 
             }while(input!=0);
         }
