@@ -6,6 +6,11 @@
 #define p printf
 #define s scanf
 #define salto printf("");
+#include "utiles.h"
+
+#define FILE_ERROR "ERROR, no se pudo abrir "
+#define ARCH_1 "clientes.dat"
+#define ARCH_2 "articulos.dat"
 
 typedef struct
 {
@@ -131,7 +136,16 @@ void mostrar(FILE *x, FILE *y)
 
 void ingresar(FILE *cl, FILE *ar)
 {
-    Aqu� deben completar la funci�n
+    if(!cl){
+        p(FILE_ERROR,ARCH_1);
+    }else{
+        rewind(cl);
+        if(!ar){
+            p(FILE_ERROR,ARCH_2);
+        }else{
+            rewind(ar);
+        }
+    }
 }
 
 int error(char *x)
