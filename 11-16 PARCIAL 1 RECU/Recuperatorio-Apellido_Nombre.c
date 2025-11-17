@@ -137,7 +137,8 @@ void ingresar(FILE *cl, FILE *ar)
 {
     regcli auxc;
     regarti auxa;
-    int input, posicion, precio=0, stock=0, i=0;
+    int input, posicion, posicion_art=0, stock=0, i=0;
+    float precio=0;
 
     salto
     p("NUEVO REGISTRO DE VENTA");
@@ -178,6 +179,8 @@ void ingresar(FILE *cl, FILE *ar)
                     p("Ingrese codigo del articulo [0 para finalizar la venta]: ");
                     s("%d",&input);
 
+                    rewind(ar);
+
                     do{
                         while(input<0&input>6){
                         salto
@@ -187,13 +190,16 @@ void ingresar(FILE *cl, FILE *ar)
 
                         while(fread(&auxa,sizeof(auxa),1,ar)==1){
                             if(input==auxa.cod_art){
-                                p("Articulo: %s - Precio: %2.f - Stock: %d",auxa.nom_art,auxa.pre_art,auxa.sto_art);
+                                p("Articulo: %s - Precio: %.2f - Stock: %d",auxa.nom_art,auxa.pre_art,auxa.sto_art);
                                 salto
                                 precio=auxa.pre_art;
                                 stock=auxa.sto_art;
+                                posicion_art=input;
                             }
                             i++;
                         }
+
+                        i=0;
 
                         salto
                         p("Ingrese cantidad a comprar: ");
@@ -206,12 +212,21 @@ void ingresar(FILE *cl, FILE *ar)
                         }
 
                         rewind(cl);
+                        rewind(ar);
                         fseek(cl,sizeof(auxc)*posicion,SEEK_SET);
+                        fseek(ar,sizeof(auxa)*posicion_art,SEEK_SET);
 
-                        auxc.cuenta=stock*precio;
+                        auxc.cuenta+=stock*precio;
+
+                        auxa.sto_art-=stock;
+                        auxa.fact_art+=stock*precio;
 
                         fwrite(&auxc, sizeof(auxc), 1, cl);
+                        fwrite(&auxa, sizeof(auxa), 1, ar);
                         fflush(cl);
+                        fflush(ar);
+
+                        p("Venta registrada: %.2f",stock*precio);
 
                         salto
                         p("Ingrese codigo del articulo [0 para finalizar la venta]:");
