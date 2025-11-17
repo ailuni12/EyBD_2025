@@ -207,9 +207,12 @@ void ingresar(FILE *cl, FILE *ar)
 
                         rewind(cl);
                         fseek(cl,sizeof(auxc)*posicion,SEEK_SET);
-       
 
-                        
+                        auxc.cuenta=stock*precio;
+
+                        fwrite(&auxc, sizeof(auxc), 1, cl);
+                        fflush(cl);
+
                         salto
                         p("Ingrese codigo del articulo [0 para finalizar la venta]:");
                         s("%d",&input);
@@ -227,6 +230,10 @@ void ingresar(FILE *cl, FILE *ar)
             }while(input!=0);
         }
     }
+
+    salto
+    p("REGISTRO DE CLIENTES ACTUALIZADO:");
+    salto
 }
 
 int error(char *x)
