@@ -175,7 +175,7 @@ void ingresar(FILE *cl, FILE *ar)
                     i=0;
 
                     salto
-                    p("Ingrese codigo del articulo [0 para finalizar la venta]:");
+                    p("Ingrese codigo del articulo [0 para finalizar la venta]: ");
                     s("%d",&input);
 
                     do{
@@ -195,6 +195,21 @@ void ingresar(FILE *cl, FILE *ar)
                             i++;
                         }
 
+                        salto
+                        p("Ingrese cantidad a comprar: ");
+                        s("%d",&input);
+
+                        while(input<0&input>stock){
+                        salto
+                        p("ERROR. El numero es invalido: ");
+                        s("%d",&input);
+                        }
+
+                        rewind(cl);
+                        fseek(cl,sizeof(auxc)*posicion,SEEK_SET);
+       
+
+                        
                         salto
                         p("Ingrese codigo del articulo [0 para finalizar la venta]:");
                         s("%d",&input);
