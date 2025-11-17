@@ -5,8 +5,7 @@
 #include <string.h>
 #define p printf
 #define s scanf
-#define salto printf("");
-#include "utiles.h"
+#define salto printf(" ");
 
 #define FILE_ERROR "ERROR, no se pudo abrir "
 #define ARCH_1 "clientes.dat"
@@ -40,9 +39,9 @@ int main()
     FILE *cli, *art;
     char nomarchcli[] = "clientes.dat";
     char nomarchart[] = "articulos.dat";
-    system("cls");
+    //system("cls");
     srand(time(NULL));
-    system("color 9f");
+    //system("color 9f");
     if ((cli = fopen(nomarchcli, "wb+")) == NULL)
         exit(error(nomarchcli));
     p("\nEl archivo %s ha sido cargado!!", nomarchcli);
@@ -60,7 +59,7 @@ int main()
     mostrar(cli, art);
     linea(80);
     tecla(); // lo muestro
-    system("cls");
+    //system("cls");
     fclose(cli);
     fclose(art);
     return (0);
@@ -110,7 +109,7 @@ void mostrar(FILE *x, FILE *y)
     regcli c;
     regarti a;
     rewind(x);
-    system("cls");
+    //system("cls");
     p("\n\n\t\t\tN%cMINA DE CLIENTES\n\n", 224);
     linea(80);
     p("\nC%cDIGO\tNOMBRE\t\t\t\t\t\tSALDO\n", 224);
@@ -136,6 +135,14 @@ void mostrar(FILE *x, FILE *y)
 
 void ingresar(FILE *cl, FILE *ar)
 {
+    regcli auxc;
+    regarti auxa;
+    int input, posicion, i=1;
+
+    salto
+    p("NUEVO REGISTRO DE VENTA");
+    salto
+
     if(!cl){
         p(FILE_ERROR,ARCH_1);
     }else{
@@ -144,6 +151,28 @@ void ingresar(FILE *cl, FILE *ar)
             p(FILE_ERROR,ARCH_2);
         }else{
             rewind(ar);
+            salto
+            p("Ingrese código de cliente [0 para finalizar]:");
+            s("%d",&input);
+
+            while(input<0&input>5){
+                p("ERROR. Ingrese un codigo valido: ");
+                s("%d",&input);
+            }
+
+            if(input!=0){
+                while(fread(&auxc,sizeof(auxc),1,cl)==1){
+                    if(input==auxc.cod_cli){
+                        posicion=i-1;
+                    }
+                    i++;
+                }
+                p("El cod en la posicion %d",posicion);
+            }else if(input==0){
+                salto
+                p("Selecciono '0'");
+                salto
+            }
         }
     }
 }
