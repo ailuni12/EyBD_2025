@@ -137,7 +137,7 @@ void ingresar(FILE *cl, FILE *ar)
 {
     regcli auxc;
     regarti auxa;
-    int input, posicion, i=0;
+    int input, posicion, precio=0, stock=0, i=0;
 
     salto
     p("NUEVO REGISTRO DE VENTA");
@@ -178,29 +178,38 @@ void ingresar(FILE *cl, FILE *ar)
                     p("Ingrese codigo del articulo [0 para finalizar la venta]:");
                     s("%d",&input);
 
-                    while(input<0&input>6){
-                    salto
-                    p("ERROR. Ingrese un codigo valido: ");
-                    s("%d",&input);
-                    }
+                    do{
+                        while(input<0&input>6){
+                        salto
+                        p("ERROR. Ingrese un codigo valido: ");
+                        s("%d",&input);
+                        }
 
-                    if(input!=0){
                         while(fread(&auxa,sizeof(auxa),1,ar)==1){
                             if(input==auxa.cod_art){
                                 p("Articulo: %s - Precio: %2.f - Stock: %d",auxa.nom_art,auxa.pre_art,auxa.sto_art);
                                 salto
+                                precio=auxa.pre_art;
+                                stock=auxa.sto_art;
                             }
-                        i++;
+                            i++;
                         }
-                    }
+
+                        salto
+                        p("Ingrese codigo del articulo [0 para finalizar la venta]:");
+                        s("%d",&input);
+                    }while(input!=0);
 
                 }else if(input==0){
                     salto
                     p("Selecciono '0'");
                     salto
                 }
-            }while(input!=0);
+            salto
+            p("Ingrese codigo de cliente [0 para finalizar]:");
+            s("%d",&input);
 
+            }while(input!=0);
         }
     }
 }
